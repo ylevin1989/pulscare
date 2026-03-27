@@ -184,7 +184,7 @@ function SiteFooter() {
           <p>
             Высший стандарт патронажной помощи.
             <br />
-            Создаём пространство заботы и уважения с 2015 года.
+            Создаём пространство заботы и уважения с 2022 года.
           </p>
         </div>
 
@@ -379,7 +379,7 @@ function HomePage({ onOpenFeedback }) {
       <section className="first-screen">
         <img className="hero-bg-overlay" src="/Group 302.svg" alt="" aria-hidden="true" />
 
-        <section className="container hero" id="about">
+        <section className="container hero">
           <div className="hero-copy">
             <h1>
               Профессиональный
@@ -418,7 +418,7 @@ function HomePage({ onOpenFeedback }) {
 
         <section className="container stats" id="safety">
           <article className="pill">
-            <p className="pill-meta">Работаем с 2015 года</p>
+            <p className="pill-meta">Работаем с 2022 года</p>
             <p className="pill-title">
               <span className="pill-line">
                 Более&nbsp;<span className="pill-value">5000</span>
@@ -445,6 +445,88 @@ function HomePage({ onOpenFeedback }) {
             </p>
           </article>
         </section>
+      </section>
+
+      <section className="container about-section" id="about">
+        <p className="section-kicker">о нас</p>
+        <h2>
+          «Пульс Заботы» - это команда, которая
+          <span> превращает уход в понятную и надежную систему</span>
+        </h2>
+
+        <div className="about-grid">
+          <article className="about-card about-card-history">
+            <div className="about-media">
+              <img
+                src="/images/service-hourly.jpg"
+                alt="Тёплая домашняя обстановка"
+                width="288"
+                height="348"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <h3>Наша история</h3>
+            <p>
+              «Пульс Заботы» работает с 2022 года. Мы начинали как небольшая команда координаторов, которые хотели
+              решить простую, но острую задачу: чтобы семья получала помощь быстро, без лишней бюрократии и тревоги.
+              Сегодня мы сопровождаем заявки в Москве и Санкт-Петербурге, сохраняя тот же принцип - быть рядом именно
+              тогда, когда поддержка нужна больше всего.
+            </p>
+            <p>
+              За эти годы мы отточили процесс подбора: от первого разговора и уточнения медицинских задач до выхода
+              специалиста и дальнейшего контроля качества. Нам важно не просто «закрыть заявку», а выстроить
+              устойчивый, человеческий маршрут ухода.
+            </p>
+          </article>
+
+          <article className="about-card about-card-process">
+            <div className="about-media">
+              <img
+                src="/images/service-hospital.jpg"
+                alt="Профессиональный уход в стационаре"
+                width="288"
+                height="348"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <h3>Как мы работаем</h3>
+            <p>
+              Мы подбираем сиделок с проживанием и патронажных медсестер для людей, которым требуется особая забота:
+              после операций, при хронических состояниях, возрастных изменениях и сложной реабилитации. Формат
+              выбирается под ваш ритм: на дому, в стационаре, по графику визитов или с постоянным сопровождением.
+            </p>
+            <p>
+              Каждую заявку курирует координатор, который помогает семье на всех этапах. Такой подход снижает
+              организационную нагрузку и возвращает главное - спокойствие за близкого человека.
+            </p>
+          </article>
+
+          <article className="about-card about-card-facts">
+            <div className="about-media">
+              <img
+                src="/images/service-special.jpg"
+                alt="Индивидуальный подход и развитие навыков"
+                width="288"
+                height="348"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <h3>Факты о «Пульсе Заботы»</h3>
+            <ul>
+              <li>В большинстве случаев начинаем подбор в день обращения.</li>
+              <li>Работаем с гибкими форматами ухода: от почасового до 24/7 с проживанием.</li>
+              <li>Сопровождаем семью после старта ухода и помогаем корректировать формат при изменении состояния.</li>
+              <li>Делаем акцент не только на навыках, но и на бережной коммуникации с подопечным.</li>
+            </ul>
+            <p>
+              Для нас профессиональный уход - это когда у семьи есть время на жизнь, а у подопечного есть достойная,
+              тёплая и регулярная поддержка каждый день.
+            </p>
+          </article>
+        </div>
       </section>
 
       <section className="container services" id="services">
