@@ -5,7 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Пульс Заботы</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preload" as="image" href="/images/hero-home.jpg" fetchpriority="high" />
+    <link
+      rel="preload"
+      as="image"
+      href="/images/hero-home-640.webp"
+      imagesrcset="/images/hero-home-480.webp 480w, /images/hero-home-640.webp 640w, /images/hero-home-960.webp 960w"
+      imagesizes="(max-width: 1280px) min(100vw - 32px, 460px), 430px"
+      fetchpriority="high"
+    />
     <style>
       .first-screen {
         position: relative;

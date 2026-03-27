@@ -439,24 +439,30 @@ function HomePage({ onOpenFeedback }) {
           </div>
 
           <div className="hero-media">
-            <img
-              className="hero-image"
-              src="/images/hero-home.jpg"
-              alt="Руки близких людей"
-              width="960"
-              height="960"
-              loading="eager"
-              decoding="sync"
-              fetchPriority="high"
-            />
-            <img
-              className="quote-bubble"
-              src="/Group 304.svg"
-              alt="Мы те, кто возвращает вашим близким радость каждого дня."
-              loading="lazy"
-              decoding="async"
-              fetchPriority="low"
-            />
+            <picture className="hero-picture">
+              <source
+                type="image/avif"
+                srcSet="/images/hero-home-480.avif 480w, /images/hero-home-640.avif 640w, /images/hero-home-960.avif 960w"
+                sizes="(max-width: 1280px) min(100vw - 32px, 460px), 430px"
+              />
+              <source
+                type="image/webp"
+                srcSet="/images/hero-home-480.webp 480w, /images/hero-home-640.webp 640w, /images/hero-home-960.webp 960w"
+                sizes="(max-width: 1280px) min(100vw - 32px, 460px), 430px"
+              />
+              <img
+                className="hero-image"
+                src="/images/hero-home-640.jpg"
+                srcSet="/images/hero-home-480.jpg 480w, /images/hero-home-640.jpg 640w, /images/hero-home-960.jpg 960w"
+                sizes="(max-width: 1280px) min(100vw - 32px, 460px), 430px"
+                alt="Руки близких людей"
+                width="960"
+                height="960"
+                loading="eager"
+                decoding="sync"
+                fetchPriority="high"
+              />
+            </picture>
           </div>
         </section>
 

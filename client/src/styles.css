@@ -180,22 +180,26 @@ a {
   position: relative;
 }
 
-.hero-image {
-  width: 100%;
-  height: auto;
-  border-radius: 80px;
-  display: block;
-}
-
-.quote-bubble {
+.hero-media::after {
+  content: "";
   position: absolute;
   right: -49px;
   bottom: -109px;
   width: 307px;
   height: 303px;
-  object-fit: contain;
-  display: block;
+  background: url("/Group 304.svg") no-repeat center / contain;
   pointer-events: none;
+}
+
+.hero-picture {
+  display: block;
+}
+
+.hero-image {
+  width: 100%;
+  height: auto;
+  border-radius: 80px;
+  display: block;
 }
 
 .stats {
@@ -987,7 +991,7 @@ a {
     max-width: 460px;
   }
 
-  .quote-bubble {
+  .hero-media::after {
     right: -36px;
     bottom: -72px;
     width: 260px;
@@ -1108,8 +1112,9 @@ a {
     border-radius: 44px;
   }
 
-  .quote-bubble {
+  .hero-media::after {
     position: static;
+    display: block;
     margin-top: 16px;
     width: 260px;
     height: 256px;
