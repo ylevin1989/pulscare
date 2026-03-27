@@ -415,6 +415,7 @@ function HomePage({ onOpenFeedback }) {
         <p className="section-kicker">спектр поддержки</p>
         <h2>
           Ваш выбор в пользу
+          {" "}
           <span>надёжности и опыта</span>
         </h2>
 
