@@ -677,37 +677,63 @@ a {
 
 .max-widget {
   position: fixed;
-  right: 22px;
-  bottom: 24px;
-  z-index: 40;
-  display: inline-flex;
+  right: 20px;
+  bottom: 20px;
+  z-index: 1000;
+  display: flex;
   align-items: center;
-  gap: 10px;
-  height: 52px;
-  padding: 0 14px;
-  border-radius: 999px;
-  background: #ffffff;
-  color: #3d3f45;
-  border: 1px solid rgba(61, 63, 69, 0.18);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 30%;
+  background: linear-gradient(to right bottom, #305ffc, #7936e3, #3dc1fd, #9b57dc);
+  box-shadow: 0 4px 15px rgba(255, 45, 85, 0.3);
+  cursor: pointer;
+  transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  text-decoration: none;
+}
+
+.max-widget.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.max-widget.hidden {
+  opacity: 0.7;
+  transform: scale(0.9);
 }
 
 .max-widget img {
-  width: 22px;
-  height: 22px;
+  width: 35px;
+  height: 35px;
   object-fit: contain;
 }
 
 .max-widget:hover,
 .max-widget:focus-visible {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
-  background: #fbf7ed;
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(255, 45, 85, 0.4);
+  opacity: 1;
+}
+
+.max-widget:active {
+  transform: scale(0.95);
+}
+
+@keyframes max-pulse {
+  0% {
+    box-shadow: 0 6px 20px rgb(86, 134, 242);
+  }
+  70% {
+    box-shadow: 0 6px 20px #6c56e9;
+  }
+  100% {
+    box-shadow: 0 6px 20px rgb(86, 134, 242);
+  }
+}
+
+.max-pulse {
+  animation: max-pulse 2s infinite;
 }
 
 .copyright {
@@ -1139,17 +1165,15 @@ a {
   }
 
   .max-widget {
-    right: 14px;
-    bottom: 14px;
-    height: 46px;
-    padding: 0 12px;
-    gap: 8px;
-    font-size: 12px;
+    width: 56px;
+    height: 56px;
+    bottom: 15px;
+    right: 15px;
   }
 
   .max-widget img {
-    width: 18px;
-    height: 18px;
+    width: 32px;
+    height: 32px;
   }
 
   .footer-grid {

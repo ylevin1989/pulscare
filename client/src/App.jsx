@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, Route, Routes, useLocation } from "react-router-dom";
 import { commonSeoFaq, seoHub, seoPages } from "./seoContent.js";
 
 const SITE_URL = "https://pulscare.ru";
-const MAX_WIDGET_URL = import.meta.env.VITE_MAX_WIDGET_URL || "https://max.ru";
+const MAX_WIDGET_URL =
+  import.meta.env.VITE_MAX_WIDGET_URL || "https://max.ru/u/f9LHodD0cOK9bS67jG-4VDuTSVNFBV-fV0bniFl5mVY8LWf-hhPpnmp4kV4";
 
 function usePageMeta({ title, description, path, index = true, publishedAt }) {
   const location = useLocation();
@@ -240,16 +241,55 @@ function SiteFooter() {
 }
 
 function MaxWidget() {
+  const [isPulsing, setIsPulsing] = useState(true);
+  const [isVisible, setIsVisible] = useState(true);
+  const isVisibleRef = useRef(true);
+  const rafId = useRef(null);
+  const lastScrollTopRef = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (rafId.current !== null) return;
+      rafId.current = window.requestAnimationFrame(() => {
+        rafId.current = null;
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const nextVisible = !(scrollTop > lastScrollTopRef.current && scrollTop > 100);
+        if (nextVisible !== isVisibleRef.current) {
+          isVisibleRef.current = nextVisible;
+          setIsVisible(nextVisible);
+        }
+        lastScrollTopRef.current = scrollTop;
+      });
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (rafId.current !== null) {
+        window.cancelAnimationFrame(rafId.current);
+        rafId.current = null;
+      }
+    };
+  }, []);
+
+  const handleClick = () => {
+    setIsPulsing(false);
+    window.setTimeout(() => {
+      setIsPulsing(true);
+    }, 30000);
+  };
+
   return (
     <a
-      className="max-widget"
+      className={`max-widget ${isPulsing ? "max-pulse" : ""} ${isVisible ? "visible" : "hidden"}`}
       href={MAX_WIDGET_URL}
       target="_blank"
       rel="noopener noreferrer"
       title="Написать в MAX"
+      id="maxMessengerIcon"
+      onClick={handleClick}
     >
       <img src="/Max_logo.svg" alt="" aria-hidden="true" />
-      <span>MAX</span>
     </a>
   );
 }
