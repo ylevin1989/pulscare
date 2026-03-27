@@ -446,16 +446,13 @@ function HomePage({ onOpenFeedback }) {
 
       <section className="container story" id="blog">
         <article className="story-card">
-          <p className="section-kicker">полезные материалы</p>
+          <p className="section-kicker">философия заботы</p>
           <h2>
-            Блог и экспертные статьи
-            <span>по сложному уходу</span>
+            Профессиональный уход - это когда
+            <span>каждый человек чувствует себя достойным и ценным!</span>
           </h2>
-          <p className="legal-note">
-            Подборки по диагнозам, формату ухода и городам. Без перегруза в навигации, но с быстрым доступом с главной.
-          </p>
-          <Link className="story-link" to={seoHub.path}>
-            Открыть раздел статей
+          <Link className="story-link" to="/#about">
+            Узнать нашу историю
           </Link>
           <img className="story-logo" src="/Group 56.svg" alt="Пульс Заботы" />
           <img className="story-orbit" src="/Vector.svg" alt="" aria-hidden="true" />
