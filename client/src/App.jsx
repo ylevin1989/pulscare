@@ -3,6 +3,7 @@ import { Link, Route, Routes, useLocation } from "react-router-dom";
 import { commonSeoFaq, seoHub, seoPages } from "./seoContent.js";
 
 const SITE_URL = "https://pulscare.ru";
+const MAX_WIDGET_URL = import.meta.env.VITE_MAX_WIDGET_URL || "https://max.ru";
 
 function usePageMeta({ title, description, path, index = true, publishedAt }) {
   const location = useLocation();
@@ -185,7 +186,9 @@ function SiteFooter() {
           <div className="social-icons" aria-label="Мессенджеры">
             <img src="/VectorVK.svg" alt="VK" />
             <img src="/PathTG.svg" alt="Telegram" />
-            <img src="/Max_logo.svg" alt="MAX" />
+            <a href={MAX_WIDGET_URL} target="_blank" rel="noopener noreferrer" aria-label="MAX">
+              <img src="/Max_logo.svg" alt="MAX" />
+            </a>
           </div>
           <p className="support">Линия заботы</p>
           <a className="phone" href="tel:+78005553535">
@@ -196,6 +199,22 @@ function SiteFooter() {
 
       <p className="copyright">© 2026 Пульс Заботы. Все права защищены.</p>
     </footer>
+  );
+}
+
+function MaxWidget() {
+  return (
+    <a
+      className="max-widget"
+      href={MAX_WIDGET_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Написать в MAX"
+      title="Написать в MAX"
+    >
+      <img src="/Max_logo.svg" alt="MAX" />
+      <span>MAX</span>
+    </a>
   );
 }
 
@@ -777,6 +796,7 @@ export default function App() {
         <Route path="/service-rules" element={<ServiceRulesPage />} />
       </Routes>
 
+      <MaxWidget />
       <SiteFooter />
       <FeedbackModal open={modalOpen} mode={feedbackMode} onClose={() => setFeedbackMode(null)} />
     </div>
