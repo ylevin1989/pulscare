@@ -449,10 +449,11 @@ function HomePage({ onOpenFeedback }) {
           <p className="section-kicker">философия заботы</p>
           <h2>
             Профессиональный уход - это когда
+            <br />
             <span>каждый человек чувствует себя достойным и ценным!</span>
           </h2>
           <Link className="story-link" to="/#about">
-            Узнать нашу историю
+            Узнать нашу историю ↗
           </Link>
           <img className="story-logo" src="/Group 56.svg" alt="Пульс Заботы" />
           <img className="story-orbit" src="/Vector.svg" alt="" aria-hidden="true" />
