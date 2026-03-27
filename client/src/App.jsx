@@ -108,6 +108,7 @@ function SiteHeader({ onUrgent }) {
       <nav className="nav" aria-label="Главная навигация">
         <a href="/#services">Услуги</a>
         <a href="/#about">О нас</a>
+        <a href="/#safety">Безопасность</a>
         <a href="/#contacts">Контакты</a>
       </nav>
 
@@ -441,6 +442,24 @@ function HomePage({ onOpenFeedback }) {
             </button>
           </article>
         </div>
+      </section>
+
+      <section className="container story" id="blog">
+        <article className="story-card">
+          <p className="section-kicker">полезные материалы</p>
+          <h2>
+            Блог и экспертные статьи
+            <span>по сложному уходу</span>
+          </h2>
+          <p className="legal-note">
+            Подборки по диагнозам, формату ухода и городам. Без перегруза в навигации, но с быстрым доступом с главной.
+          </p>
+          <Link className="story-link" to={seoHub.path}>
+            Открыть раздел статей
+          </Link>
+          <img className="story-logo" src="/Group 56.svg" alt="Пульс Заботы" />
+          <img className="story-orbit" src="/Vector.svg" alt="" aria-hidden="true" />
+        </article>
       </section>
     </main>
   );
