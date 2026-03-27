@@ -1294,6 +1294,31 @@ function ServiceRulesPage() {
   );
 }
 
+function NotFoundPage() {
+  usePageMeta({
+    title: "Страница не найдена (404) - Пульс Заботы",
+    description: "Запрошенная страница не найдена. Вернитесь на главную страницу Пульс Заботы.",
+    index: false
+  });
+
+  return (
+    <main className="legal-main">
+      <section className="container legal-hero">
+        <p className="legal-kicker">404</p>
+        <h1>Страница не найдена</h1>
+        <p className="legal-lead">
+          Такой страницы нет или адрес был изменён. Перейдите на главную и выберите нужный раздел.
+        </p>
+        <p>
+          <Link className="story-link" to="/">
+            На главную
+          </Link>
+        </p>
+      </section>
+    </main>
+  );
+}
+
 export default function App() {
   const [feedbackMode, setFeedbackMode] = useState(null);
 
@@ -1348,6 +1373,7 @@ export default function App() {
         <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
         <Route path="/public-offer" element={<OfferPage />} />
         <Route path="/service-rules" element={<ServiceRulesPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
 
       <MaxWidget />

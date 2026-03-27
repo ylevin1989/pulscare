@@ -161,6 +161,10 @@ app.post("/api/feedback", (req, res) => {
   return res.json({ ok: true, message: "Спасибо! Заявка отправлена." });
 });
 
+app.get(["/index.html", "/index.htm"], (_req, res) => {
+  res.redirect(301, "/");
+});
+
 app.use(
   express.static(distPath, {
     index: false,
@@ -185,9 +189,10 @@ app.use(
 );
 
 app.get("*", (_req, res) => {
+  const routeMeta = getRouteMeta(_req.path);
   const html = renderHtmlWithMeta(_req.path);
   res.setHeader("Cache-Control", "public, max-age=0, must-revalidate");
-  res.send(html);
+  res.status(routeMeta.index ? 200 : 404).send(html);
 });
 
 app.listen(PORT, () => {
