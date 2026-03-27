@@ -2,6 +2,7 @@
   --bg: #fdf9ee;
   --text: #4a4a4a;
   --accent: #d4856a;
+  --accent-strong: #a24e37;
   --accent-soft: #e9b88a;
   --footer: #4a4a4a;
   --footer-text: #fdf9ee;
@@ -128,7 +129,7 @@ a {
 
 .btn-primary {
   background: var(--accent);
-  color: var(--bg);
+  color: #2f2520;
 }
 
 .btn-outline {
@@ -165,7 +166,7 @@ a {
 .hero-copy h1 span,
 .services h2 span,
 .story-card h2 span {
-  color: var(--accent);
+  color: var(--accent-strong);
 }
 
 .hero-copy p {
@@ -226,7 +227,7 @@ a {
   margin-bottom: 10px;
 }
 
-.pill h3 {
+.pill-title {
   margin: 0;
   border: 1px solid var(--accent);
   border-radius: var(--radius-pill);
@@ -500,7 +501,7 @@ a {
   width: 254px;
 }
 
-.footer-grid h4 {
+.footer-title {
   margin: 10px 0 26px;
   font-family: "Cormorant", serif;
   font-size: 18px;

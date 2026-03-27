@@ -39,6 +39,43 @@ function usePageMeta({ title, description, path, index = true, publishedAt }) {
   }, [location.pathname, path]);
 
   useEffect(() => {
+    const canonicalHref = `${SITE_URL}${path || location.pathname}`;
+
+    const upsertPropertyMeta = (property, content) => {
+      let tag = document.querySelector(`meta[property="${property}"]`);
+      if (!tag) {
+        tag = document.createElement("meta");
+        tag.setAttribute("property", property);
+        document.head.appendChild(tag);
+      }
+      tag.setAttribute("content", content);
+    };
+
+    const upsertNameMeta = (name, content) => {
+      let tag = document.querySelector(`meta[name="${name}"]`);
+      if (!tag) {
+        tag = document.createElement("meta");
+        tag.setAttribute("name", name);
+        document.head.appendChild(tag);
+      }
+      tag.setAttribute("content", content);
+    };
+
+    upsertPropertyMeta("og:type", "website");
+    upsertPropertyMeta("og:site_name", "Пульс Заботы");
+    upsertPropertyMeta("og:title", title || "Пульс Заботы");
+    if (description) {
+      upsertPropertyMeta("og:description", description);
+      upsertNameMeta("twitter:description", description);
+    }
+    upsertPropertyMeta("og:url", canonicalHref);
+    upsertNameMeta("twitter:card", "summary_large_image");
+    upsertNameMeta("twitter:title", title || "Пульс Заботы");
+    upsertNameMeta("geo.region", "RU-MOW");
+    upsertNameMeta("geo.placename", "Москва; Санкт-Петербург");
+  }, [description, location.pathname, path, title]);
+
+  useEffect(() => {
     let robots = document.querySelector("meta[name='robots']");
     if (!robots) {
       robots = document.createElement("meta");
@@ -152,7 +189,7 @@ function SiteFooter() {
         </div>
 
         <div className="footer-col footer-nav">
-          <h4>Навигация</h4>
+          <p className="footer-title">Навигация</p>
           <ul>
             <li>
               <a href="/#services">Услуги</a>
@@ -167,7 +204,7 @@ function SiteFooter() {
         </div>
 
         <div className="footer-col footer-legal">
-          <h4>Юридическая информация</h4>
+          <p className="footer-title">Юридическая информация</p>
           <ul>
             <li>
               <Link to="/privacy-policy">Политика конфиденциальности</Link>
@@ -182,7 +219,7 @@ function SiteFooter() {
         </div>
 
         <div className="footer-col footer-contact">
-          <h4>Связь</h4>
+          <p className="footer-title">Связь</p>
           <div className="social-icons" aria-label="Мессенджеры">
             <img src="/VectorVK.svg" alt="VK" />
             <img src="/PathTG.svg" alt="Telegram" />
@@ -209,10 +246,9 @@ function MaxWidget() {
       href={MAX_WIDGET_URL}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Написать в MAX"
       title="Написать в MAX"
     >
-      <img src="/Max_logo.svg" alt="MAX" />
+      <img src="/Max_logo.svg" alt="" aria-hidden="true" />
       <span>MAX</span>
     </a>
   );
@@ -383,30 +419,30 @@ function HomePage({ onOpenFeedback }) {
         <section className="container stats" id="safety">
           <article className="pill">
             <p className="pill-meta">Работаем с 2015 года</p>
-            <h3>
+            <p className="pill-title">
               <span className="pill-line">
                 Более&nbsp;<span className="pill-value">5000</span>
               </span>
               <span className="pill-line">довольных семей.</span>
-            </h3>
+            </p>
           </article>
           <article className="pill">
             <p className="pill-meta">100% проверка персонала</p>
-            <h3>
+            <p className="pill-title">
               <span className="pill-line">Отбор проходят</span>
               <span className="pill-line">
                 только&nbsp;<span className="pill-value">5%</span>&nbsp;кандидатов.
               </span>
-            </h3>
+            </p>
           </article>
           <article className="pill">
             <p className="pill-meta">Личный куратор</p>
-            <h3>
+            <p className="pill-title">
               <span className="pill-line">Поддержка и</span>
               <span className="pill-line">
                 контроль&nbsp;<span className="pill-value">24/7</span>.
               </span>
-            </h3>
+            </p>
           </article>
         </section>
       </section>
@@ -790,6 +826,31 @@ export default function App() {
   const [feedbackMode, setFeedbackMode] = useState(null);
 
   const modalOpen = useMemo(() => feedbackMode !== null, [feedbackMode]);
+  const organizationLd = useMemo(
+    () => ({
+      "@context": "https://schema.org",
+      "@type": "HomeAndConstructionBusiness",
+      name: "Пульс Заботы",
+      url: SITE_URL,
+      telephone: "+7-800-555-35-35",
+      areaServed: ["Москва", "Санкт-Петербург"],
+      sameAs: [MAX_WIDGET_URL]
+    }),
+    []
+  );
+  const websiteLd = useMemo(
+    () => ({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "Пульс Заботы",
+      url: SITE_URL,
+      inLanguage: "ru-RU"
+    }),
+    []
+  );
+
+  useStructuredData("org-ld", organizationLd);
+  useStructuredData("website-ld", websiteLd);
 
   return (
     <div className="page-shell">

@@ -1,5 +1,9 @@
 User-agent: *
 Allow: /
 
-Host: https://pulscare.ru
+User-agent: Yandex
+Allow: /
+
+Host: pulscare.ru
 Sitemap: https://pulscare.ru/sitemap.xml
+Sitemap: https://pulsezaboty.ru/sitemap.xml
