@@ -1,6 +1,6 @@
 # pulscare.ru llms-full
 
-Updated-At: 2026-03-27T17:07:55.145Z
+Updated-At: 2026-03-27T17:14:56.806Z
 Total-Routes: 245
 SEO-Pages: 240
 

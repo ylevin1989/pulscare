@@ -9,6 +9,7 @@ const __dirname = path.dirname(__filename);
 const siteUrl = "https://pulscare.ru";
 const altSiteUrl = "https://pulsezaboty.ru";
 const publicDir = path.resolve(__dirname, "../client/public");
+const serverDir = path.resolve(__dirname, "../server");
 
 const staticRoutes = ["/", seoHub.path, "/privacy-policy", "/public-offer", "/service-rules"];
 const allRoutes = [...staticRoutes, ...seoPages.map((page) => page.path)];
@@ -105,11 +106,32 @@ function toLlmsFullTxt() {
 }
 
 await fs.mkdir(publicDir, { recursive: true });
+await fs.mkdir(serverDir, { recursive: true });
 await fs.writeFile(path.join(publicDir, "sitemap.xml"), toSitemapIndexXml(), "utf8");
 await fs.writeFile(path.join(publicDir, "sitemap-main.xml"), toUrlsetXml(staticRoutes), "utf8");
 await fs.writeFile(path.join(publicDir, "sitemap-seo.xml"), toUrlsetXml(seoPages.map((page) => page.path)), "utf8");
 await fs.writeFile(path.join(publicDir, "robots.txt"), toRobotsTxt(), "utf8");
 await fs.writeFile(path.join(publicDir, "llms.txt"), toLlmsTxt(), "utf8");
 await fs.writeFile(path.join(publicDir, "llms-full.txt"), toLlmsFullTxt(), "utf8");
+await fs.writeFile(
+  path.join(serverDir, "seo-meta.json"),
+  JSON.stringify(
+    {
+      generatedAt,
+      seoHub: {
+        path: seoHub.path
+      },
+      seoPages: seoPages.map((page) => ({
+        path: page.path,
+        metaTitle: page.metaTitle,
+        metaDescription: page.metaDescription,
+        addedAt: page.addedAt
+      }))
+    },
+    null,
+    2
+  ),
+  "utf8"
+);
 
 console.log(`Generated SEO assets for ${allRoutes.length} routes on ${generatedDate}.`);

@@ -6,7 +6,6 @@ import dotenv from "dotenv";
 import path from "node:path";
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
-import { seoHub, seoPages } from "../client/src/seoContent.js";
 
 dotenv.config();
 
@@ -17,8 +16,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const distPath = path.resolve(__dirname, "../client/dist");
 const indexHtmlPath = path.join(distPath, "index.html");
+const seoMetaPath = path.join(__dirname, "seo-meta.json");
 const siteUrl = "https://pulscare.ru";
 let cachedIndexHtml = "";
+const seoMetaJson = JSON.parse(fs.readFileSync(seoMetaPath, "utf8"));
 
 function escapeHtml(value = "") {
   return String(value)
@@ -40,7 +41,7 @@ const staticMeta = new Map([
     }
   ],
   [
-    seoHub.path,
+    seoMetaJson.seoHub.path,
     {
       title: "240 статей по сложному уходу - Москва, районы Москвы, СПб и районы СПб | Пульс Заботы",
       description:
@@ -76,7 +77,7 @@ const staticMeta = new Map([
 ]);
 
 const seoMeta = new Map(
-  seoPages.map((page) => [
+  seoMetaJson.seoPages.map((page) => [
     page.path,
     {
       title: page.metaTitle,
