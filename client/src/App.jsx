@@ -445,13 +445,17 @@ function HomePage({ onOpenFeedback }) {
               alt="Руки близких людей"
               width="960"
               height="960"
-              decoding="async"
+              loading="eager"
+              decoding="sync"
               fetchPriority="high"
             />
             <img
               className="quote-bubble"
               src="/Group 304.svg"
               alt="Мы те, кто возвращает вашим близким радость каждого дня."
+              loading="lazy"
+              decoding="async"
+              fetchPriority="low"
             />
           </div>
         </section>
