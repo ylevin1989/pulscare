@@ -1,0 +1,11 @@
+services:
+  pulscare:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pulscare-site
+    ports:
+      - "3001:3001"
+    env_file:
+      - .env
+    restart: unless-stopped
