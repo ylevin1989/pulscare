@@ -2,7 +2,7 @@
   --bg: #fdf9ee;
   --text: #4a4a4a;
   --accent: #d4856a;
-  --accent-strong: #a24e37;
+  --accent-strong: #d4856a;
   --accent-soft: #e9b88a;
   --footer: #4a4a4a;
   --footer-text: #fdf9ee;
@@ -48,7 +48,7 @@ a {
   top: -380px;
   right: -280px;
   width: min(1180px, 92vw);
-  opacity: 0.45;
+  opacity: 0.28;
   pointer-events: none;
   z-index: 0;
 }
@@ -85,6 +85,7 @@ a {
   left: auto;
   transform: rotate(30deg);
   transform-origin: center;
+  opacity: 0.72;
   pointer-events: none;
   user-select: none;
   z-index: 0;
@@ -129,7 +130,7 @@ a {
 
 .btn-primary {
   background: var(--accent);
-  color: #2f2520;
+  color: var(--bg);
 }
 
 .btn-outline {
