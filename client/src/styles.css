@@ -1113,18 +1113,11 @@ a {
   }
 
   .hero-media::after {
-    position: static;
-    display: block;
-    margin-top: 16px;
-    width: 260px;
-    height: 256px;
+    display: none;
   }
 
   .hero-bg-overlay {
-    width: 680px;
-    top: -170px;
-    right: -165px;
-    left: auto;
+    display: none;
   }
 
   .services {

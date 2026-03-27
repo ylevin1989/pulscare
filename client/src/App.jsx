@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, Route, Routes, useLocation } from "react-router-dom";
-import { commonSeoFaq, seoHub, seoPages } from "./seoContent.js";
+import { Link, Route, Routes, useLocation, useParams } from "react-router-dom";
 
 const SITE_URL = "https://pulscare.ru";
 const MAX_WIDGET_URL =
   import.meta.env.VITE_MAX_WIDGET_URL || "https://max.ru/u/f9LHodD0cOK9bS67jG-4VDuTSVNFBV-fV0bniFl5mVY8LWf-hhPpnmp4kV4";
+const SEO_HUB_PATH = "/articles";
 
 function usePageMeta({ title, description, path, index = true, publishedAt }) {
   const location = useLocation();
@@ -705,7 +705,7 @@ function SeoFaq({ items }) {
   );
 }
 
-function SeoServicePage({ page, onOpenFeedback }) {
+function SeoServicePage({ page, onOpenFeedback, commonSeoFaq }) {
   usePageMeta({
     title: page.metaTitle,
     description: page.metaDescription,
@@ -713,7 +713,7 @@ function SeoServicePage({ page, onOpenFeedback }) {
     publishedAt: page.addedAt
   });
 
-  const faqItems = useMemo(() => [...page.faq, ...commonSeoFaq], [page.faq]);
+  const faqItems = useMemo(() => [...page.faq, ...commonSeoFaq], [page.faq, commonSeoFaq]);
 
   const medicalLd = useMemo(
     () => ({
@@ -810,7 +810,7 @@ function SeoServicePage({ page, onOpenFeedback }) {
   );
 }
 
-function SeoHubPage({ onOpenFeedback }) {
+function SeoHubPage({ onOpenFeedback, seoHub, seoPages }) {
   usePageMeta({
     title: "240 статей по сложному уходу - Москва, районы Москвы, СПб и районы СПб | Пульс Заботы",
     description:
@@ -861,6 +861,67 @@ function SeoHubPage({ onOpenFeedback }) {
         <SeoFaq items={seoHub.faq} />
       </section>
     </main>
+  );
+}
+
+function SeoHubRoutePage({ onOpenFeedback }) {
+  const [payload, setPayload] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+    import("./seoContent.js").then((module) => {
+      if (!active) return;
+      setPayload({ seoHub: module.seoHub, seoPages: module.seoPages });
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  if (!payload) {
+    return (
+      <main className="seo-main">
+        <section className="container seo-hero">
+          <h1>Загрузка раздела статей…</h1>
+        </section>
+      </main>
+    );
+  }
+
+  return <SeoHubPage onOpenFeedback={onOpenFeedback} seoHub={payload.seoHub} seoPages={payload.seoPages} />;
+}
+
+function SeoDynamicRoutePage({ onOpenFeedback }) {
+  const { seoSlug } = useParams();
+  const [payload, setPayload] = useState({ loading: true, page: null, commonSeoFaq: [] });
+
+  useEffect(() => {
+    let active = true;
+    import("./seoContent.js").then((module) => {
+      if (!active) return;
+      const pagePath = `/${seoSlug}`;
+      const page = module.seoPages.find((item) => item.path === pagePath) || null;
+      setPayload({ loading: false, page, commonSeoFaq: module.commonSeoFaq || [] });
+    });
+    return () => {
+      active = false;
+    };
+  }, [seoSlug]);
+
+  if (payload.loading) {
+    return (
+      <main className="seo-main">
+        <section className="container seo-hero">
+          <h1>Загрузка статьи…</h1>
+        </section>
+      </main>
+    );
+  }
+
+  if (!payload.page) return <NotFoundPage />;
+
+  return (
+    <SeoServicePage page={payload.page} onOpenFeedback={onOpenFeedback} commonSeoFaq={payload.commonSeoFaq} />
   );
 }
 
@@ -1372,17 +1433,11 @@ export default function App() {
 
       <Routes>
         <Route path="/" element={<HomePage onOpenFeedback={setFeedbackMode} />} />
-        <Route path={seoHub.path} element={<SeoHubPage onOpenFeedback={setFeedbackMode} />} />
-        {seoPages.map((page) => (
-          <Route
-            key={page.slug}
-            path={page.path}
-            element={<SeoServicePage page={page} onOpenFeedback={setFeedbackMode} />}
-          />
-        ))}
+        <Route path={SEO_HUB_PATH} element={<SeoHubRoutePage onOpenFeedback={setFeedbackMode} />} />
         <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
         <Route path="/public-offer" element={<OfferPage />} />
         <Route path="/service-rules" element={<ServiceRulesPage />} />
+        <Route path="/:seoSlug" element={<SeoDynamicRoutePage onOpenFeedback={setFeedbackMode} />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
 
