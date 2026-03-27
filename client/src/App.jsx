@@ -107,7 +107,6 @@ function SiteHeader({ onUrgent }) {
 
       <nav className="nav" aria-label="Главная навигация">
         <a href="/#services">Услуги</a>
-        <Link to={seoHub.path}>Статьи</Link>
         <a href="/#about">О нас</a>
         <a href="/#contacts">Контакты</a>
       </nav>
@@ -120,8 +119,6 @@ function SiteHeader({ onUrgent }) {
 }
 
 function SiteFooter() {
-  const featuredSeoPages = seoPages.slice(0, 5);
-
   return (
     <footer className="site-footer" id="contacts">
       <div className="container footer-grid">
@@ -141,25 +138,11 @@ function SiteFooter() {
               <a href="/#services">Услуги</a>
             </li>
             <li>
-              <Link to={seoHub.path}>Статьи</Link>
-            </li>
-            <li>
               <a href="/#about">О нас</a>
             </li>
             <li>
               <a href="/#contacts">Контакты</a>
             </li>
-          </ul>
-        </div>
-
-        <div className="footer-col footer-seo">
-          <h4>Сложный уход</h4>
-          <ul>
-            {featuredSeoPages.map((page) => (
-              <li key={page.slug}>
-                <Link to={page.path}>{page.navLabel}</Link>
-              </li>
-            ))}
           </ul>
         </div>
 

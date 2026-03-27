@@ -458,7 +458,7 @@ a {
 
 .footer-grid {
   display: grid;
-  grid-template-columns: 254px 119px 220px 273px 254px;
+  grid-template-columns: 254px 119px 273px 254px;
   justify-content: space-between;
   align-items: flex-start;
   gap: 18px;
@@ -496,10 +496,6 @@ a {
 
 .footer-legal {
   width: 273px;
-}
-
-.footer-seo {
-  width: 220px;
 }
 
 .footer-contact {
