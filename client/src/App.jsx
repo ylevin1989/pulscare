@@ -121,7 +121,7 @@ function SiteHeader({ onUrgent }) {
   return (
     <header className="container site-header">
       <Link to="/" className="brand">
-        <img src="/Group 56.svg" alt="Логотип Пульс Заботы" />
+        <img src="/Group 56.svg" alt="Логотип Пульс Заботы" width="223" height="69" />
       </Link>
 
       <nav className="nav" aria-label="Главная навигация">
@@ -143,7 +143,7 @@ function SiteFooter() {
     <footer className="site-footer" id="contacts">
       <div className="container footer-grid">
         <div className="footer-brand">
-          <img src="/Group 318.svg" alt="Логотип Пульс Заботы" />
+          <img src="/Group 318.svg" alt="Логотип Пульс Заботы" width="223" height="69" />
           <p>
             Высший стандарт патронажной помощи.
             <br />
@@ -365,8 +365,12 @@ function HomePage({ onOpenFeedback }) {
           <div className="hero-media">
             <img
               className="hero-image"
-              src="https://www.figma.com/api/mcp/asset/00132961-cacf-4f4c-a556-bc2540a876db"
+              src="/images/hero-home.jpg"
               alt="Руки близких людей"
+              width="960"
+              height="960"
+              decoding="async"
+              fetchPriority="high"
             />
             <img
               className="quote-bubble"
@@ -419,8 +423,12 @@ function HomePage({ onOpenFeedback }) {
             <div className="service-media">
               <img
                 className="service-photo"
-                src="https://www.figma.com/api/mcp/asset/6d494e95-a057-46bb-bebf-983e672032ac"
+                src="/images/service-hourly.jpg"
                 alt="Почасовой уход"
+                width="288"
+                height="348"
+                loading="lazy"
+                decoding="async"
               />
               <img className="service-decor service-decor-1" src="/Vector1.svg" alt="" aria-hidden="true" />
             </div>
@@ -435,8 +443,12 @@ function HomePage({ onOpenFeedback }) {
             <div className="service-media">
               <img
                 className="service-photo"
-                src="https://www.figma.com/api/mcp/asset/82ef3342-112d-490f-a18e-19af28df2f38"
+                src="/images/service-livein.jpg"
                 alt="Сиделка с проживанием"
+                width="288"
+                height="348"
+                loading="lazy"
+                decoding="async"
               />
               <img className="service-decor service-decor-2" src="/Vector2.svg" alt="" aria-hidden="true" />
             </div>
@@ -451,8 +463,12 @@ function HomePage({ onOpenFeedback }) {
             <div className="service-media">
               <img
                 className="service-photo"
-                src="https://www.figma.com/api/mcp/asset/67d3bdd8-4d14-4818-9591-2057f0da2078"
+                src="/images/service-hospital.jpg"
                 alt="Уход в больнице"
+                width="288"
+                height="348"
+                loading="lazy"
+                decoding="async"
               />
               <img className="service-decor service-decor-3" src="/Vector3.svg" alt="" aria-hidden="true" />
             </div>
@@ -467,8 +483,12 @@ function HomePage({ onOpenFeedback }) {
             <div className="service-media">
               <img
                 className="service-photo"
-                src="https://www.figma.com/api/mcp/asset/660cb142-f158-45cc-9579-5c3c339645bf"
+                src="/images/service-special.jpg"
                 alt="Специальный уход"
+                width="288"
+                height="348"
+                loading="lazy"
+                decoding="async"
               />
               <img className="service-decor service-decor-4" src="/Subtract4.svg" alt="" aria-hidden="true" />
             </div>
@@ -775,7 +795,7 @@ export default function App() {
       <ScrollManager />
       <img
         className="bg-swirl"
-        src="https://www.figma.com/api/mcp/asset/6b71b9f0-77ce-4ad2-96d8-fcfeadaffa58"
+        src="/images/6b71b9f0-77ce-4ad2-96d8-fcfeadaffa58.svg"
         alt=""
         aria-hidden="true"
       />

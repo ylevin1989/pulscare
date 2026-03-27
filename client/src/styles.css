@@ -181,6 +181,7 @@ a {
 
 .hero-image {
   width: 100%;
+  height: auto;
   border-radius: 80px;
   display: block;
 }

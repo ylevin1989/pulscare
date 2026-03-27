@@ -43,7 +43,27 @@ app.post("/api/feedback", (req, res) => {
   return res.json({ ok: true, message: "Спасибо! Заявка отправлена." });
 });
 
-app.use(express.static(distPath));
+app.use(
+  express.static(distPath, {
+    etag: true,
+    lastModified: true,
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith(".html")) {
+        res.setHeader("Cache-Control", "public, max-age=0, must-revalidate");
+        return;
+      }
+
+      if (/\/assets\/.+-[A-Za-z0-9_-]+\.(js|css)$/.test(filePath)) {
+        res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+        return;
+      }
+
+      if (/\.(svg|png|jpe?g|webp|gif|ico)$/i.test(filePath)) {
+        res.setHeader("Cache-Control", "public, max-age=2592000");
+      }
+    }
+  })
+);
 
 app.get("*", (_req, res) => {
   res.sendFile(path.join(distPath, "index.html"));
