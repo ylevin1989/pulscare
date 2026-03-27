@@ -98,6 +98,24 @@ function useStructuredData(id, data) {
   }, [id, location.pathname, data]);
 }
 
+function ScrollManager() {
+  const { pathname, hash } = useLocation();
+
+  useEffect(() => {
+    if (hash) {
+      const target = document.getElementById(hash.slice(1));
+      if (target) {
+        target.scrollIntoView({ behavior: "auto", block: "start" });
+        return;
+      }
+    }
+
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [pathname, hash]);
+
+  return null;
+}
+
 function SiteHeader({ onUrgent }) {
   return (
     <header className="container site-header">
@@ -735,6 +753,7 @@ export default function App() {
 
   return (
     <div className="page-shell">
+      <ScrollManager />
       <img
         className="bg-swirl"
         src="https://www.figma.com/api/mcp/asset/6b71b9f0-77ce-4ad2-96d8-fcfeadaffa58"
