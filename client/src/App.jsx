@@ -11,6 +11,38 @@ const SITE_URL = "https://pulscare.ru";
 const MAX_WIDGET_URL =
   import.meta.env.VITE_MAX_WIDGET_URL || "https://max.ru/u/f9LHodD0cOK9bS67jG-4VDuTSVNFBV-fV0bniFl5mVY8LWf-hhPpnmp4kV4";
 const SEO_HUB_PATH = "/articles";
+const DEFAULT_HOME_CONTENT = {
+  hero: {
+    title_lines: ["Профессиональный", "уход за вашими", "близкими на дому"],
+    lead: "Проверенные сиделки, личный менеджер и контроль качества 24/7. Вернем спокойствие в вашу семью.",
+    cta: "Начать подбор"
+  },
+  safety_cards: [
+    { meta: "Работаем с 2022 года", lines: ["Более 5000", "довольных семей."] },
+    { meta: "100% проверка персонала", lines: ["Отбор проходят", "только 5% кандидатов."] },
+    { meta: "Личный куратор", lines: ["Поддержка и", "контроль 24/7."] }
+  ],
+  about: {
+    kicker: "о нас",
+    title: "«Пульс Заботы» - это команда, которая превращает уход в понятную и надежную систему"
+  },
+  services: {
+    kicker: "спектр поддержки",
+    title: "Ваш выбор в пользу надёжности и опыта"
+  }
+};
+
+function getLegalPageContent(siteProfile, slug, fallback) {
+  const pages = Array.isArray(siteProfile?.legal_content?.pages) ? siteProfile.legal_content.pages : [];
+  const found = pages.find((item) => item?.slug === slug);
+  if (!found) return fallback;
+
+  return {
+    title: found.title || fallback.title,
+    lead: found.lead || fallback.lead,
+    note: found.note || fallback.note
+  };
+}
 
 function usePageMeta({ title, description, path, index = true, publishedAt }) {
   const location = useLocation();
@@ -417,7 +449,23 @@ function FeedbackModal({ open, mode, onClose }) {
   );
 }
 
-function HomePage({ onOpenFeedback }) {
+function HomePage({ onOpenFeedback, siteProfile }) {
+  const homeContent = siteProfile?.home_content || DEFAULT_HOME_CONTENT;
+  const heroLines =
+    Array.isArray(homeContent?.hero?.title_lines) && homeContent.hero.title_lines.length >= 3
+      ? homeContent.hero.title_lines
+      : DEFAULT_HOME_CONTENT.hero.title_lines;
+  const heroLead = homeContent?.hero?.lead || DEFAULT_HOME_CONTENT.hero.lead;
+  const heroCta = homeContent?.hero?.cta || DEFAULT_HOME_CONTENT.hero.cta;
+  const safetyCards =
+    Array.isArray(homeContent?.safety_cards) && homeContent.safety_cards.length >= 3
+      ? homeContent.safety_cards.slice(0, 3)
+      : DEFAULT_HOME_CONTENT.safety_cards;
+  const aboutKicker = homeContent?.about?.kicker || DEFAULT_HOME_CONTENT.about.kicker;
+  const aboutTitle = homeContent?.about?.title || DEFAULT_HOME_CONTENT.about.title;
+  const servicesKicker = homeContent?.services?.kicker || DEFAULT_HOME_CONTENT.services.kicker;
+  const servicesTitle = homeContent?.services?.title || DEFAULT_HOME_CONTENT.services.title;
+
   usePageMeta({
     title: "Пульс Заботы - сиделки и патронажная помощь на дому",
     description:
@@ -433,19 +481,15 @@ function HomePage({ onOpenFeedback }) {
         <section className="container hero">
           <div className="hero-copy">
             <h1>
-              Профессиональный
+              {heroLines[0]}
               <br />
-              уход за вашими
+              {heroLines[1]}
               <br />
-              близкими <span>на дому</span>
+              {heroLines[2].replace(/\s+на дому$/i, "")} <span>на дому</span>
             </h1>
-            <p>
-              Проверенные сиделки, личный менеджер и контроль
-              <br />
-              качества 24/7. Вернем спокойствие в вашу семью.
-            </p>
+            <p>{heroLead}</p>
             <button className="btn btn-primary" type="button" onClick={() => onOpenFeedback("match")}>
-              Начать подбор
+              {heroCta}
             </button>
           </div>
 
@@ -478,41 +522,25 @@ function HomePage({ onOpenFeedback }) {
         </section>
 
         <section className="container stats" id="safety">
-          <article className="pill">
-            <p className="pill-meta">Работаем с 2022 года</p>
-            <p className="pill-title">
-              <span className="pill-line">
-                Более&nbsp;<span className="pill-value">5000</span>
-              </span>
-              <span className="pill-line">довольных семей.</span>
-            </p>
-          </article>
-          <article className="pill">
-            <p className="pill-meta">100% проверка персонала</p>
-            <p className="pill-title">
-              <span className="pill-line">Отбор проходят</span>
-              <span className="pill-line">
-                только&nbsp;<span className="pill-value">5%</span>&nbsp;кандидатов.
-              </span>
-            </p>
-          </article>
-          <article className="pill">
-            <p className="pill-meta">Личный куратор</p>
-            <p className="pill-title">
-              <span className="pill-line">Поддержка и</span>
-              <span className="pill-line">
-                контроль&nbsp;<span className="pill-value">24/7</span>.
-              </span>
-            </p>
-          </article>
+          {safetyCards.map((card, index) => (
+            <article className="pill" key={`safety-${index}`}>
+              <p className="pill-meta">{card.meta}</p>
+              <p className="pill-title">
+                {(card.lines || []).map((line, lineIdx) => (
+                  <span className="pill-line" key={`line-${lineIdx}`}>
+                    {line}
+                  </span>
+                ))}
+              </p>
+            </article>
+          ))}
         </section>
       </section>
 
       <section className="container about-section" id="about">
-        <p className="section-kicker">о нас</p>
+        <p className="section-kicker">{aboutKicker}</p>
         <h2>
-          «Пульс Заботы» - это команда, которая
-          <span> превращает уход в понятную и надежную систему</span>
+          {aboutTitle}
         </h2>
 
         <div className="about-grid">
@@ -591,12 +619,8 @@ function HomePage({ onOpenFeedback }) {
       </section>
 
       <section className="container services" id="services">
-        <p className="section-kicker">спектр поддержки</p>
-        <h2>
-          Ваш выбор в пользу
-          {" "}
-          <span>надёжности и опыта</span>
-        </h2>
+        <p className="section-kicker">{servicesKicker}</p>
+        <h2>{servicesTitle}</h2>
 
         <div className="cards-grid">
           <article className="service-card service-card-1">
@@ -1197,7 +1221,13 @@ function LegalPage({ title, lead, note, children }) {
   );
 }
 
-function PrivacyPolicyPage() {
+function PrivacyPolicyPage({ siteProfile }) {
+  const legal = getLegalPageContent(siteProfile, "privacy-policy", {
+    title: "Политика обработки персональных данных",
+    lead: "Настоящая Политика действует в отношении всей информации, которую сервис «Пульс Заботы» может получить о пользователе при подборе сиделки, консультации, использовании сайта и иных каналов связи.",
+    note: "Документ составлен с учетом требований Федерального закона №152-ФЗ «О персональных данных», №149-ФЗ «Об информации, информационных технологиях и о защите информации», а также иных применимых норм РФ."
+  });
+
   usePageMeta({
     title: "Политика обработки персональных данных - Пульс Заботы",
     description:
@@ -1207,9 +1237,9 @@ function PrivacyPolicyPage() {
 
   return (
     <LegalPage
-      title="Политика обработки персональных данных"
-      lead="Настоящая Политика действует в отношении всей информации, которую сервис «Пульс Заботы» может получить о пользователе при подборе сиделки, консультации, использовании сайта и иных каналов связи."
-      note="Документ составлен с учетом требований Федерального закона №152-ФЗ «О персональных данных», №149-ФЗ «Об информации, информационных технологиях и о защите информации», а также иных применимых норм РФ."
+      title={legal.title}
+      lead={legal.lead}
+      note={legal.note}
     >
       <h2>1. Оператор персональных данных</h2>
       <p>
@@ -1310,7 +1340,13 @@ function PrivacyPolicyPage() {
   );
 }
 
-function OfferPage() {
+function OfferPage({ siteProfile }) {
+  const legal = getLegalPageContent(siteProfile, "public-offer", {
+    title: "Публичная оферта о подборе сиделки",
+    lead: "Настоящий документ является предложением заключить договор оказания информационно-консультационных услуг по подбору кандидата-сиделки. Документ определяет права, обязанности и границы ответственности сторон.",
+    note: "Важно: Сервис «Пульс Заботы» оказывает услугу подбора и сопровождения коммуникации, но не является стороной фактических трудовых/гражданско-правовых отношений между заказчиком и сиделкой."
+  });
+
   usePageMeta({
     title: "Публичная оферта о подборе сиделки - Пульс Заботы",
     description: "Условия публичной оферты сервиса Пульс Заботы по подбору сиделок.",
@@ -1319,9 +1355,9 @@ function OfferPage() {
 
   return (
     <LegalPage
-      title="Публичная оферта о подборе сиделки"
-      lead="Настоящий документ является предложением заключить договор оказания информационно-консультационных услуг по подбору кандидата-сиделки. Документ определяет права, обязанности и границы ответственности сторон."
-      note="Важно: Сервис «Пульс Заботы» оказывает услугу подбора и сопровождения коммуникации, но не является стороной фактических трудовых/гражданско-правовых отношений между заказчиком и сиделкой."
+      title={legal.title}
+      lead={legal.lead}
+      note={legal.note}
     >
       <h2>1. Термины и определения</h2>
       <ul>
@@ -1457,7 +1493,13 @@ function OfferPage() {
   );
 }
 
-function ServiceRulesPage() {
+function ServiceRulesPage({ siteProfile }) {
+  const legal = getLegalPageContent(siteProfile, "service-rules", {
+    title: "Правила оказания услуг",
+    lead: "Настоящие Правила регулируют порядок подбора и сопровождения подопечных сервисом «Пульс Заботы», права и обязанности сторон, а также границы ответственности.",
+    note: "«Пульс Заботы» оказывает организационно-информационные услуги по подбору кандидатов. Сиделка не является сотрудником сервиса, если это отдельно не оформлено письменным трудовым договором."
+  });
+
   usePageMeta({
     title: "Правила оказания услуг - Пульс Заботы",
     description: "Правила оказания услуг сервиса Пульс Заботы: обязанности сторон и порядок обслуживания.",
@@ -1466,9 +1508,9 @@ function ServiceRulesPage() {
 
   return (
     <LegalPage
-      title="Правила оказания услуг"
-      lead="Настоящие Правила регулируют порядок подбора и сопровождения подопечных сервисом «Пульс Заботы», права и обязанности сторон, а также границы ответственности."
-      note="«Пульс Заботы» оказывает организационно-информационные услуги по подбору кандидатов. Сиделка не является сотрудником сервиса, если это отдельно не оформлено письменным трудовым договором."
+      title={legal.title}
+      lead={legal.lead}
+      note={legal.note}
     >
       <h2>Содержание</h2>
       <ul>
@@ -1711,14 +1753,14 @@ export default function App() {
       <SiteHeader onUrgent={setFeedbackMode} />
 
       <Routes>
-        <Route path="/" element={<HomePage onOpenFeedback={setFeedbackMode} />} />
+        <Route path="/" element={<HomePage onOpenFeedback={setFeedbackMode} siteProfile={siteProfile} />} />
         <Route path="/services" element={<CoreServicesHubPage onOpenFeedback={setFeedbackMode} />} />
         <Route path="/services/:serviceSlug" element={<CoreServiceRoutePage onOpenFeedback={setFeedbackMode} />} />
         <Route path="/expert-care" element={<SeoHubRoutePage onOpenFeedback={setFeedbackMode} />} />
         <Route path={SEO_HUB_PATH} element={<SeoHubRoutePage onOpenFeedback={setFeedbackMode} />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-        <Route path="/public-offer" element={<OfferPage />} />
-        <Route path="/service-rules" element={<ServiceRulesPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicyPage siteProfile={siteProfile} />} />
+        <Route path="/public-offer" element={<OfferPage siteProfile={siteProfile} />} />
+        <Route path="/service-rules" element={<ServiceRulesPage siteProfile={siteProfile} />} />
         <Route path="/:seoSlug" element={<SeoDynamicRoutePage onOpenFeedback={setFeedbackMode} />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
