@@ -165,6 +165,10 @@ app.get(["/index.html", "/index.htm"], (_req, res) => {
   res.redirect(301, "/");
 });
 
+app.get("/expert-care", (_req, res) => {
+  res.redirect(301, "/articles");
+});
+
 app.use(
   express.static(distPath, {
     index: false,

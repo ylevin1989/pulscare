@@ -1472,6 +1472,7 @@ export default function App() {
 
       <Routes>
         <Route path="/" element={<HomePage onOpenFeedback={setFeedbackMode} />} />
+        <Route path="/expert-care" element={<SeoHubRoutePage onOpenFeedback={setFeedbackMode} />} />
         <Route path={SEO_HUB_PATH} element={<SeoHubRoutePage onOpenFeedback={setFeedbackMode} />} />
         <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
         <Route path="/public-offer" element={<OfferPage />} />
