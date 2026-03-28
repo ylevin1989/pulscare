@@ -182,17 +182,21 @@ function SiteHeader({ onUrgent }) {
   );
 }
 
-function SiteFooter() {
+function SiteFooter({ siteProfile }) {
+  const widgetUrl = siteProfile?.max_widget_url || MAX_WIDGET_URL;
+  const supportPhone = siteProfile?.support_phone || "+78005553535";
+  const supportLabel = siteProfile?.support_label || "Линия заботы";
+  const footerBlurb =
+    siteProfile?.footer_blurb ||
+    "Высший стандарт патронажной помощи. Создаём пространство заботы и уважения с 2022 года.";
+  const supportPhoneDisplay = supportPhone.replace(/^\+7/, "8 ").replace(/(\d{3})(\d{3})(\d{2})(\d{2})$/, "$1 $2 $3 $4");
+
   return (
     <footer className="site-footer" id="contacts">
       <div className="container footer-grid">
         <div className="footer-brand">
           <img src="/Group 318.svg" alt="Логотип Пульс Заботы" width="223" height="69" />
-          <p>
-            Высший стандарт патронажной помощи.
-            <br />
-            Создаём пространство заботы и уважения с 2022 года.
-          </p>
+          <p>{footerBlurb}</p>
         </div>
 
         <div className="footer-col footer-nav">
@@ -230,13 +234,13 @@ function SiteFooter() {
           <div className="social-icons" aria-label="Мессенджеры">
             <img src="/VectorVK.svg" alt="VK" />
             <img src="/PathTG.svg" alt="Telegram" />
-            <a href={MAX_WIDGET_URL} target="_blank" rel="noopener noreferrer" aria-label="MAX">
+            <a href={widgetUrl} target="_blank" rel="noopener noreferrer" aria-label="MAX">
               <img src="/Max_logo.svg" alt="MAX" />
             </a>
           </div>
-          <p className="support">Линия заботы</p>
-          <a className="phone" href="tel:+78005553535">
-            8 800 555 35 35
+          <p className="support">{supportLabel}</p>
+          <a className="phone" href={`tel:${supportPhone}`}>
+            {supportPhoneDisplay}
           </a>
         </div>
       </div>
@@ -246,7 +250,8 @@ function SiteFooter() {
   );
 }
 
-function MaxWidget() {
+function MaxWidget({ siteProfile }) {
+  const widgetUrl = siteProfile?.max_widget_url || MAX_WIDGET_URL;
   const [isPulsing, setIsPulsing] = useState(true);
   const [isVisible, setIsVisible] = useState(true);
   const isVisibleRef = useRef(true);
@@ -288,7 +293,7 @@ function MaxWidget() {
   return (
     <a
       className={`max-widget ${isPulsing ? "max-pulse" : ""} ${isVisible ? "visible" : "hidden"}`}
-      href={MAX_WIDGET_URL}
+      href={widgetUrl}
       target="_blank"
       rel="noopener noreferrer"
       title="Написать в MAX"
@@ -1645,8 +1650,29 @@ function NotFoundPage() {
 
 export default function App() {
   const [feedbackMode, setFeedbackMode] = useState(null);
+  const [siteProfile, setSiteProfile] = useState(null);
 
   const modalOpen = useMemo(() => feedbackMode !== null, [feedbackMode]);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/content/site-profile")
+      .then(async (response) => {
+        if (!response.ok) return null;
+        const json = await response.json();
+        if (!json?.ok || !json?.data) return null;
+        return json.data;
+      })
+      .then((data) => {
+        if (!active || !data) return;
+        setSiteProfile(data);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const organizationLd = useMemo(
     () => ({
       "@context": "https://schema.org",
@@ -1655,9 +1681,9 @@ export default function App() {
       url: SITE_URL,
       telephone: "+7-800-555-35-35",
       areaServed: ["Москва", "Санкт-Петербург"],
-      sameAs: [MAX_WIDGET_URL]
+      sameAs: [siteProfile?.max_widget_url || MAX_WIDGET_URL]
     }),
-    []
+    [siteProfile?.max_widget_url]
   );
   const websiteLd = useMemo(
     () => ({
@@ -1697,8 +1723,8 @@ export default function App() {
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
 
-      <MaxWidget />
-      <SiteFooter />
+      <MaxWidget siteProfile={siteProfile} />
+      <SiteFooter siteProfile={siteProfile} />
       <FeedbackModal open={modalOpen} mode={feedbackMode} onClose={() => setFeedbackMode(null)} />
     </div>
   );
