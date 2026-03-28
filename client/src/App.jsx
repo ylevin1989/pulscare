@@ -11,6 +11,14 @@ const SITE_URL = "https://pulscare.ru";
 const MAX_WIDGET_URL =
   import.meta.env.VITE_MAX_WIDGET_URL || "https://max.ru/u/f9LHodD0cOK9bS67jG-4VDuTSVNFBV-fV0bniFl5mVY8LWf-hhPpnmp4kV4";
 const SEO_HUB_PATH = "/articles";
+const CONTACT_PHONE = "+79119104012";
+const CONTACT_EMAIL = "142@blizkie.org";
+const LEGAL_OPERATOR_NAME = "ИП ЛЕВИНА ЕКАТЕРИНА ВАСИЛЬЕВНА";
+const LEGAL_INN = "143527714325";
+const LEGAL_ADDRESS = "г. Санкт-Петербург";
+const LEGAL_BANK_NAME = "ООО «Банк Точка»";
+const LEGAL_BANK_BIK = "772301001";
+const LEGAL_BANK_RS = "40802810320000793831";
 const DEFAULT_HOME_CONTENT = {
   hero: {
     title_lines: ["Профессиональный", "уход за вашими", "близкими на дому"],
@@ -37,11 +45,76 @@ function getLegalPageContent(siteProfile, slug, fallback) {
   const found = pages.find((item) => item?.slug === slug);
   if (!found) return fallback;
 
-  return {
-    title: found.title || fallback.title,
-    lead: found.lead || fallback.lead,
-    note: found.note || fallback.note
+  const replacePairs = [
+    ["[укажите полное наименование юридического лица / ИП]", LEGAL_OPERATOR_NAME],
+    ["[юридический адрес]", LEGAL_ADDRESS],
+    ["[email]", CONTACT_EMAIL],
+    ["[телефон]", CONTACT_PHONE],
+    ["+7-800-555-35-35", CONTACT_PHONE],
+    ["8 800 555 35 35", "8 911 910 40 12"]
+  ];
+
+  const sanitize = (value) => {
+    if (typeof value === "string") {
+      let out = value;
+      for (const [from, to] of replacePairs) {
+        out = out.split(from).join(to);
+      }
+      return out;
+    }
+    if (Array.isArray(value)) return value.map(sanitize);
+    if (value && typeof value === "object") {
+      return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, sanitize(v)]));
+    }
+    return value;
   };
+
+  const safeFound = sanitize(found);
+
+  return {
+    title: safeFound.title || fallback.title,
+    lead: safeFound.lead || fallback.lead,
+    note: safeFound.note || fallback.note,
+    sections: Array.isArray(safeFound.sections) ? safeFound.sections : [],
+    signoff: Array.isArray(safeFound.signoff) ? safeFound.signoff : []
+  };
+}
+
+function resolveSupportPhone(rawPhone) {
+  const cleaned = String(rawPhone || "").replace(/[^\d+]/g, "");
+  if (!cleaned) return CONTACT_PHONE;
+  if (cleaned.includes("8005553535") || cleaned.includes("8004440610")) return CONTACT_PHONE;
+  return cleaned.startsWith("+") ? cleaned : `+${cleaned}`;
+}
+
+function LegalStructuredContent({ sections = [], signoff = [] }) {
+  return (
+    <>
+      {sections.map((section, index) => (
+        <section key={`${section.id || section.title || "section"}-${index}`}>
+          {section.title ? <h2 id={section.id || undefined}>{section.title}</h2> : null}
+          {section.html ? <div dangerouslySetInnerHTML={{ __html: section.html }} /> : null}
+          {Array.isArray(section.paragraphs)
+            ? section.paragraphs.map((paragraph, pIndex) => <p key={`p-${pIndex}`}>{paragraph}</p>)
+            : null}
+          {Array.isArray(section.bullets) && section.bullets.length > 0 ? (
+            <ul>
+              {section.bullets.map((bullet, bIndex) => (
+                <li key={`b-${bIndex}`}>{bullet}</li>
+              ))}
+            </ul>
+          ) : null}
+        </section>
+      ))}
+      {signoff.length > 0 ? (
+        <div className="legal-signoff">
+          {signoff.map((line, index) => (
+            <p key={`signoff-${index}`}>{line}</p>
+          ))}
+        </div>
+      ) : null}
+    </>
+  );
 }
 
 function usePageMeta({ title, description, path, index = true, publishedAt }) {
@@ -216,7 +289,7 @@ function SiteHeader({ onUrgent }) {
 
 function SiteFooter({ siteProfile }) {
   const widgetUrl = siteProfile?.max_widget_url || MAX_WIDGET_URL;
-  const supportPhone = siteProfile?.support_phone || "+78005553535";
+  const supportPhone = resolveSupportPhone(siteProfile?.support_phone);
   const supportLabel = siteProfile?.support_label || "Линия заботы";
   const footerBlurb =
     siteProfile?.footer_blurb ||
@@ -1225,7 +1298,9 @@ function PrivacyPolicyPage({ siteProfile }) {
   const legal = getLegalPageContent(siteProfile, "privacy-policy", {
     title: "Политика обработки персональных данных",
     lead: "Настоящая Политика действует в отношении всей информации, которую сервис «Пульс Заботы» может получить о пользователе при подборе сиделки, консультации, использовании сайта и иных каналов связи.",
-    note: "Документ составлен с учетом требований Федерального закона №152-ФЗ «О персональных данных», №149-ФЗ «Об информации, информационных технологиях и о защите информации», а также иных применимых норм РФ."
+    note: "Документ составлен с учетом требований Федерального закона №152-ФЗ «О персональных данных», №149-ФЗ «Об информации, информационных технологиях и о защите информации», а также иных применимых норм РФ.",
+    sections: [],
+    signoff: []
   });
 
   usePageMeta({
@@ -1241,15 +1316,17 @@ function PrivacyPolicyPage({ siteProfile }) {
       lead={legal.lead}
       note={legal.note}
     >
+      {legal.sections.length > 0 ? <LegalStructuredContent sections={legal.sections} signoff={legal.signoff} /> : (
+        <>
       <h2>1. Оператор персональных данных</h2>
       <p>
-        Оператор: <strong>[укажите полное наименование юридического лица / ИП]</strong>.
+        Оператор: <strong>{LEGAL_OPERATOR_NAME}</strong>.
         <br />
-        Адрес: <strong>[юридический адрес]</strong>.
+        Адрес: <strong>{LEGAL_ADDRESS}</strong>.
         <br />
-        E-mail для обращений по ПДн: <strong>[email]</strong>.
+        E-mail для обращений по ПДн: <strong>{CONTACT_EMAIL}</strong>.
         <br />
-        Телефон: <strong>[телефон]</strong>.
+        Телефон: <strong>{CONTACT_PHONE}</strong>.
       </p>
 
       <h2>2. Категории персональных данных</h2>
@@ -1311,7 +1388,7 @@ function PrivacyPolicyPage({ siteProfile }) {
 
       <h2>8. Порядок направления обращений</h2>
       <p>
-        Запросы по вопросам обработки персональных данных направляются на адрес: <strong>[email]</strong>. В запросе
+        Запросы по вопросам обработки персональных данных направляются на адрес: <strong>{CONTACT_EMAIL}</strong>. В запросе
         рекомендуется указать ФИО, контакты для ответа, суть обращения и сведения, подтверждающие связь с сервисом.
       </p>
 
@@ -1336,6 +1413,8 @@ function PrivacyPolicyPage({ siteProfile }) {
           <strong>Версия документа:</strong> 1.0
         </p>
       </div>
+        </>
+      )}
     </LegalPage>
   );
 }
@@ -1344,7 +1423,9 @@ function OfferPage({ siteProfile }) {
   const legal = getLegalPageContent(siteProfile, "public-offer", {
     title: "Публичная оферта о подборе сиделки",
     lead: "Настоящий документ является предложением заключить договор оказания информационно-консультационных услуг по подбору кандидата-сиделки. Документ определяет права, обязанности и границы ответственности сторон.",
-    note: "Важно: Сервис «Пульс Заботы» оказывает услугу подбора и сопровождения коммуникации, но не является стороной фактических трудовых/гражданско-правовых отношений между заказчиком и сиделкой."
+    note: "Важно: Сервис «Пульс Заботы» оказывает услугу подбора и сопровождения коммуникации, но не является стороной фактических трудовых/гражданско-правовых отношений между заказчиком и сиделкой.",
+    sections: [],
+    signoff: []
   });
 
   usePageMeta({
@@ -1359,6 +1440,8 @@ function OfferPage({ siteProfile }) {
       lead={legal.lead}
       note={legal.note}
     >
+      {legal.sections.length > 0 ? <LegalStructuredContent sections={legal.sections} signoff={legal.signoff} /> : (
+        <>
       <h2>1. Термины и определения</h2>
       <ul>
         <li>
@@ -1470,15 +1553,21 @@ function OfferPage({ siteProfile }) {
 
       <h2>13. Реквизиты Исполнителя</h2>
       <p>
-        Наименование: <strong>[укажите]</strong>
+        Наименование: <strong>{LEGAL_OPERATOR_NAME}</strong>
         <br />
-        ИНН/ОГРН: <strong>[укажите]</strong>
+        ИНН: <strong>{LEGAL_INN}</strong>
         <br />
-        Адрес: <strong>[укажите]</strong>
+        р/с: <strong>{LEGAL_BANK_RS}</strong>
         <br />
-        E-mail: <strong>[укажите]</strong>
+        Банк: <strong>{LEGAL_BANK_NAME}</strong>
         <br />
-        Телефон: <strong>[укажите]</strong>
+        БИК: <strong>{LEGAL_BANK_BIK}</strong>
+        <br />
+        Адрес: <strong>{LEGAL_ADDRESS}</strong>
+        <br />
+        E-mail: <strong>{CONTACT_EMAIL}</strong>
+        <br />
+        Телефон: <strong>{CONTACT_PHONE}</strong>
       </p>
 
       <div className="legal-signoff">
@@ -1489,6 +1578,8 @@ function OfferPage({ siteProfile }) {
           <strong>Версия документа:</strong> 1.0
         </p>
       </div>
+        </>
+      )}
     </LegalPage>
   );
 }
@@ -1497,7 +1588,9 @@ function ServiceRulesPage({ siteProfile }) {
   const legal = getLegalPageContent(siteProfile, "service-rules", {
     title: "Правила оказания услуг",
     lead: "Настоящие Правила регулируют порядок подбора и сопровождения подопечных сервисом «Пульс Заботы», права и обязанности сторон, а также границы ответственности.",
-    note: "«Пульс Заботы» оказывает организационно-информационные услуги по подбору кандидатов. Сиделка не является сотрудником сервиса, если это отдельно не оформлено письменным трудовым договором."
+    note: "«Пульс Заботы» оказывает организационно-информационные услуги по подбору кандидатов. Сиделка не является сотрудником сервиса, если это отдельно не оформлено письменным трудовым договором.",
+    sections: [],
+    signoff: []
   });
 
   usePageMeta({
@@ -1512,6 +1605,8 @@ function ServiceRulesPage({ siteProfile }) {
       lead={legal.lead}
       note={legal.note}
     >
+      {legal.sections.length > 0 ? <LegalStructuredContent sections={legal.sections} signoff={legal.signoff} /> : (
+        <>
       <h2>Содержание</h2>
       <ul>
         <li>
@@ -1661,6 +1756,8 @@ function ServiceRulesPage({ siteProfile }) {
           <strong>Версия документа:</strong> 1.0
         </p>
       </div>
+        </>
+      )}
     </LegalPage>
   );
 }
@@ -1721,11 +1818,11 @@ export default function App() {
       "@type": "HomeAndConstructionBusiness",
       name: "Пульс Заботы",
       url: SITE_URL,
-      telephone: "+7-800-555-35-35",
+      telephone: resolveSupportPhone(siteProfile?.support_phone),
       areaServed: ["Москва", "Санкт-Петербург"],
       sameAs: [siteProfile?.max_widget_url || MAX_WIDGET_URL]
     }),
-    [siteProfile?.max_widget_url]
+    [siteProfile?.max_widget_url, siteProfile?.support_phone]
   );
   const websiteLd = useMemo(
     () => ({
