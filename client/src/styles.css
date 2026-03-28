@@ -837,66 +837,115 @@ a {
 }
 
 .seo-main {
-  padding: 34px 0 96px;
+  padding: 28px 0 88px;
 }
 
 .seo-hero h1 {
   margin: 0;
-  max-width: 1050px;
+  max-width: 980px;
   font-family: "Cormorant", serif;
-  font-size: 62px;
-  line-height: 0.95;
+  font-size: 52px;
+  line-height: 0.98;
 }
 
 .seo-lead {
-  margin: 18px 0 26px;
-  max-width: 1020px;
-  font-size: 24px;
-  line-height: 1.35;
+  margin: 14px 0 18px;
+  max-width: 940px;
+  font-size: 21px;
+  line-height: 1.36;
 }
 
 .seo-meta-line {
-  margin: 12px 0 0;
-  font-size: 14px;
+  margin: 10px 0 0;
+  font-size: 13px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  opacity: 0.84;
 }
 
 .seo-hero-btn {
-  width: 320px;
+  width: 300px;
+}
+
+.seo-intent-card {
+  margin: 0 0 18px;
+  background: #fffdf7;
+  border: 1px solid rgba(212, 133, 106, 0.4);
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+
+.seo-intent-card h2 {
+  margin: 0 0 10px;
+  font-family: "Cormorant", serif;
+  font-size: 30px;
+  line-height: 1;
+}
+
+.seo-intent-list {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 8px;
+}
+
+.seo-intent-list li {
+  font-size: 16px;
+  line-height: 1.35;
 }
 
 .seo-content {
+  margin-top: 20px;
+}
+
+.seo-layout {
   display: grid;
-  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 16px;
+  align-items: start;
+}
+
+.seo-main-col {
+  display: grid;
+  gap: 14px;
+}
+
+.seo-side-col {
+  display: grid;
+  gap: 14px;
+  position: sticky;
+  top: 92px;
 }
 
 .seo-section-card {
   background: rgba(253, 249, 238, 0.88);
   border: 1px solid rgba(212, 133, 106, 0.35);
   border-radius: 14px;
-  padding: 26px 28px;
+  padding: 22px 24px;
 }
 
 .seo-section-card h2,
 .seo-faq h2 {
-  margin: 0 0 12px;
+  margin: 0 0 10px;
   font-family: "Cormorant", serif;
-  font-size: 38px;
-  line-height: 0.95;
+  font-size: 32px;
+  line-height: 0.98;
 }
 
 .seo-section-card p,
 .seo-section-card li,
-.seo-faq-item p {
-  font-size: 19px;
-  line-height: 1.42;
+.seo-faq-item p,
+.seo-quick-nav a {
+  font-size: 17px;
+  line-height: 1.45;
 }
 
 .seo-section-card ul,
 .seo-keywords ul {
   margin: 8px 0 0;
   padding-left: 24px;
+  display: grid;
+  gap: 7px;
 }
 
 .seo-sources a {
@@ -915,20 +964,20 @@ a {
   background: #fffdf7;
   border: 1px solid rgba(212, 133, 106, 0.35);
   border-radius: 14px;
-  padding: 20px;
+  padding: 18px;
 }
 
 .seo-tile h3,
-.seo-faq-item h3 {
+.seo-faq-question {
   margin: 0 0 10px;
   font-family: "Cormorant", serif;
-  font-size: 30px;
-  line-height: 0.98;
+  font-size: 26px;
+  line-height: 1.02;
 }
 
 .seo-tile p {
   margin: 0 0 16px;
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.35;
 }
 
@@ -945,24 +994,85 @@ a {
 }
 
 .seo-faq {
-  padding-top: 8px;
+  padding-top: 6px;
 }
 
-.seo-faq-grid {
+.seo-faq-accordion {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  gap: 10px;
 }
 
 .seo-faq-item {
-  background: #fffdf7;
+  background: #fffef9;
   border: 1px solid rgba(212, 133, 106, 0.35);
   border-radius: 12px;
-  padding: 20px;
+  padding: 0;
+  overflow: hidden;
 }
 
-.seo-faq-item p {
+.seo-faq-item[open] {
+  border-color: rgba(212, 133, 106, 0.5);
+}
+
+.seo-faq-question {
+  list-style: none;
+  cursor: pointer;
+  padding: 15px 18px 14px;
   margin: 0;
+  position: relative;
+}
+
+.seo-faq-question::-webkit-details-marker {
+  display: none;
+}
+
+.seo-faq-question::after {
+  content: "+";
+  position: absolute;
+  right: 16px;
+  top: 13px;
+  width: 24px;
+  height: 24px;
+  border-radius: 99px;
+  border: 1px solid rgba(212, 133, 106, 0.5);
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.seo-faq-item[open] .seo-faq-question::after {
+  content: "−";
+}
+
+.seo-faq-answer {
+  padding: 0 18px 16px;
+}
+
+.seo-faq-answer p {
+  margin: 0;
+}
+
+.seo-quick-nav ul {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 9px;
+}
+
+.seo-quick-nav a {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.seo-mini-cta p {
+  margin: 0;
+}
+
+.seo-mini-cta .btn {
+  margin-top: 14px;
+  width: 100%;
 }
 
 @media (max-width: 1280px) {
@@ -1056,11 +1166,20 @@ a {
   }
 
   .seo-hero h1 {
-    font-size: 52px;
+    font-size: 46px;
   }
 
   .seo-lead {
-    font-size: 21px;
+    font-size: 19px;
+  }
+
+  .seo-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .seo-side-col {
+    position: static;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .seo-grid {
@@ -1069,13 +1188,14 @@ a {
 
   .seo-section-card h2,
   .seo-faq h2 {
-    font-size: 34px;
+    font-size: 30px;
   }
 
   .seo-section-card p,
   .seo-section-card li,
-  .seo-faq-item p {
-    font-size: 17px;
+  .seo-faq-item p,
+  .seo-quick-nav a {
+    font-size: 16px;
   }
 }
 
@@ -1222,18 +1342,30 @@ a {
   }
 
   .seo-hero h1 {
-    font-size: 42px;
+    font-size: 36px;
   }
 
   .seo-lead {
-    font-size: 18px;
+    font-size: 17px;
   }
 
   .seo-hero-btn {
     width: 100%;
   }
 
+  .seo-intent-card h2 {
+    font-size: 26px;
+  }
+
+  .seo-intent-list li {
+    font-size: 15px;
+  }
+
   .seo-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .seo-side-col {
     grid-template-columns: 1fr;
   }
 
@@ -1243,18 +1375,15 @@ a {
 
   .seo-section-card h2,
   .seo-faq h2 {
-    font-size: 28px;
+    font-size: 26px;
   }
 
   .seo-section-card p,
   .seo-section-card li,
   .seo-tile p,
-  .seo-faq-item p {
+  .seo-faq-item p,
+  .seo-quick-nav a {
     font-size: 16px;
-  }
-
-  .seo-faq-grid {
-    grid-template-columns: 1fr;
   }
 }
 

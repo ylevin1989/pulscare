@@ -689,16 +689,18 @@ function HomePage({ onOpenFeedback }) {
   );
 }
 
-function SeoFaq({ items }) {
+function SeoFaq({ items, title = "Частые вопросы" }) {
   return (
-    <section className="seo-faq" aria-label="Часто задаваемые вопросы">
-      <h2>FAQ</h2>
-      <div className="seo-faq-grid">
-        {items.map((item) => (
-          <article key={item.question} className="seo-faq-item">
-            <h3>{item.question}</h3>
-            <p>{item.answer}</p>
-          </article>
+    <section className="seo-faq" id="faq" aria-label="Часто задаваемые вопросы">
+      <h2>{title}</h2>
+      <div className="seo-faq-accordion">
+        {items.map((item, index) => (
+          <details key={item.question} className="seo-faq-item" open={index === 0}>
+            <summary className="seo-faq-question">{item.question}</summary>
+            <div className="seo-faq-answer">
+              <p>{item.answer}</p>
+            </div>
+          </details>
         ))}
       </div>
     </section>
@@ -714,6 +716,7 @@ function SeoServicePage({ page, onOpenFeedback, commonSeoFaq }) {
   });
 
   const faqItems = useMemo(() => [...page.faq, ...commonSeoFaq], [page.faq, commonSeoFaq]);
+  const intentQueries = useMemo(() => page.lowFrequencyQueries.slice(0, 4), [page.lowFrequencyQueries]);
 
   const medicalLd = useMemo(
     () => ({
@@ -758,53 +761,89 @@ function SeoServicePage({ page, onOpenFeedback, commonSeoFaq }) {
           </time>
         </p>
         <p className="seo-lead">{page.lead}</p>
+        <article className="seo-intent-card" aria-label="Поисковые формулировки">
+          <h2>Если вы искали именно это, вы на нужной странице</h2>
+          <ul className="seo-intent-list">
+            {intentQueries.map((query) => (
+              <li key={query}>{query}</li>
+            ))}
+          </ul>
+        </article>
         <button className="btn btn-primary seo-hero-btn" type="button" onClick={() => onOpenFeedback("seo-page")}>
           Подобрать сиделку
         </button>
       </section>
 
       <section className="container seo-content">
-        {page.sections.map((section) => (
-          <article key={section.heading} className="seo-section-card">
-            <h2>{section.heading}</h2>
-            <ul>
-              {section.points.map((point) => (
-                <li key={point}>{point}</li>
-              ))}
-            </ul>
-          </article>
-        ))}
-
-        <article className="seo-section-card seo-keywords">
-          <h2>Низкочастотные запросы по теме</h2>
-          <p>
-            Ниже собраны длинные и узкие поисковые формулировки, под которые мы оптимизировали эту страницу. Они
-            отражают реальные сложные кейсы семей.
-          </p>
-          <ul>
-            {page.lowFrequencyQueries.map((query) => (
-              <li key={query}>{query}</li>
+        <div className="seo-layout">
+          <div className="seo-main-col">
+            {page.sections.map((section, index) => (
+              <article key={section.heading} className="seo-section-card" id={`section-${index + 1}`}>
+                <h2>{section.heading}</h2>
+                <ul>
+                  {section.points.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </article>
             ))}
-          </ul>
-        </article>
 
-        <article className="seo-section-card seo-sources">
-          <h2>Научные и клинические источники</h2>
-          <p>
-            Мы используем проверяемые медицинские и научные публикации как основу редакционной подготовки материалов.
-          </p>
-          <ul>
-            {page.scientificLinks.map((source) => (
-              <li key={source.url}>
-                <a href={source.url} target="_blank" rel="noopener noreferrer">
-                  {source.title}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </article>
+            <article className="seo-section-card seo-keywords">
+              <h2>Низкочастотные запросы по теме</h2>
+              <p>
+                Ниже собраны точные формулировки, по которым семьи приходят из поиска. Это реальные запросы для
+                сложных сценариев ухода.
+              </p>
+              <ul>
+                {page.lowFrequencyQueries.map((query) => (
+                  <li key={query}>{query}</li>
+                ))}
+              </ul>
+            </article>
 
-        <SeoFaq items={faqItems} />
+            <article className="seo-section-card seo-sources">
+              <h2>Научные и клинические источники</h2>
+              <p>
+                В материалах используем только проверяемые источники: международные гайдлайны, государственные
+                медицинские порталы и рецензируемые публикации.
+              </p>
+              <ul>
+                {page.scientificLinks.map((source) => (
+                  <li key={source.url}>
+                    <a href={source.url} target="_blank" rel="noopener noreferrer">
+                      {source.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </article>
+
+            <SeoFaq items={faqItems} title="FAQ по уходу и подбору сиделки" />
+          </div>
+
+          <aside className="seo-side-col" aria-label="Быстрая навигация">
+            <article className="seo-section-card seo-quick-nav">
+              <h2>Быстро по странице</h2>
+              <ul>
+                {page.sections.map((section, index) => (
+                  <li key={section.heading}>
+                    <a href={`#section-${index + 1}`}>{section.heading}</a>
+                  </li>
+                ))}
+                <li>
+                  <a href="#faq">FAQ</a>
+                </li>
+              </ul>
+            </article>
+            <article className="seo-section-card seo-mini-cta">
+              <h2>Нужен подбор под вашу ситуацию?</h2>
+              <p>Оставьте заявку и получите персональный план ухода с учетом диагноза, формата и срочности.</p>
+              <button className="btn btn-primary" type="button" onClick={() => onOpenFeedback("seo-page")}>
+                Получить консультацию
+              </button>
+            </article>
+          </aside>
+        </div>
       </section>
     </main>
   );
@@ -858,7 +897,7 @@ function SeoHubPage({ onOpenFeedback, seoHub, seoPages }) {
           </button>
         </article>
 
-        <SeoFaq items={seoHub.faq} />
+        <SeoFaq items={seoHub.faq} title="FAQ по разделу статей" />
       </section>
     </main>
   );
