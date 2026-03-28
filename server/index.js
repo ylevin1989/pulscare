@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import dotenv from "dotenv";
+import pg from "pg";
 import path from "node:path";
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -20,6 +21,27 @@ const seoMetaPath = path.join(__dirname, "seo-meta.json");
 const siteUrl = "https://pulscare.ru";
 let cachedIndexHtml = "";
 const seoMetaJson = JSON.parse(fs.readFileSync(seoMetaPath, "utf8"));
+const { Pool } = pg;
+
+const dbUrl = process.env.PULSCARE_DB_URL || "";
+const dbEnabled = Boolean(dbUrl);
+const contentDb = dbEnabled
+  ? new Pool({
+      connectionString: dbUrl,
+      ssl: process.env.PULSCARE_DB_SSL === "false" ? false : { rejectUnauthorized: false }
+    })
+  : null;
+
+async function getContentDbHealth() {
+  if (!contentDb) return { enabled: false, ok: false };
+  try {
+    await contentDb.query("select 1");
+    return { enabled: true, ok: true };
+  } catch (error) {
+    console.error("[content-db] health error:", error.message);
+    return { enabled: true, ok: false };
+  }
+}
 
 function escapeHtml(value = "") {
   return String(value)
@@ -140,6 +162,112 @@ app.use(morgan("dev"));
 
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true, ts: new Date().toISOString() });
+});
+
+app.get("/api/content/health", async (_req, res) => {
+  const state = await getContentDbHealth();
+  res.json(state);
+});
+
+app.get("/api/content/site-profile", async (_req, res) => {
+  if (!contentDb) return res.status(503).json({ ok: false, error: "content_db_disabled" });
+  try {
+    const { rows } = await contentDb.query(
+      `select site_name, site_url, support_phone, support_label, max_widget_url, footer_blurb, home_content, legal_content, updated_at
+       from pc_site_profile where id = 1`
+    );
+    if (!rows[0]) return res.status(404).json({ ok: false, error: "site_profile_not_found" });
+    res.json({ ok: true, data: rows[0] });
+  } catch (error) {
+    console.error("[content-db] site-profile error:", error.message);
+    res.status(500).json({ ok: false, error: "site_profile_query_failed" });
+  }
+});
+
+app.get("/api/content/seo-hub", async (_req, res) => {
+  if (!contentDb) return res.status(503).json({ ok: false, error: "content_db_disabled" });
+  try {
+    const hubRes = await contentDb.query(
+      "select path, title, lead, intro, cta_text, faq, updated_at from pc_seo_hub where id = 1"
+    );
+    if (!hubRes.rows[0]) return res.status(404).json({ ok: false, error: "seo_hub_not_found" });
+
+    const pagesRes = await contentDb.query(
+      `select slug, path, nav_label, title, meta_title, meta_description, added_at, lead
+       from pc_seo_pages
+       order by id`
+    );
+    const faqRes = await contentDb.query(
+      "select question, answer from pc_seo_common_faq order by sort_order asc, id asc"
+    );
+
+    const hub = {
+      path: hubRes.rows[0].path,
+      title: hubRes.rows[0].title,
+      lead: hubRes.rows[0].lead,
+      intro: hubRes.rows[0].intro,
+      ctaText: hubRes.rows[0].cta_text,
+      faq: hubRes.rows[0].faq || []
+    };
+
+    const pages = pagesRes.rows.map((row) => ({
+      slug: row.slug,
+      path: row.path,
+      navLabel: row.nav_label,
+      title: row.title,
+      metaTitle: row.meta_title,
+      metaDescription: row.meta_description,
+      addedAt: row.added_at,
+      lead: row.lead
+    }));
+
+    const commonFaq = faqRes.rows.map((row) => ({ question: row.question, answer: row.answer }));
+    res.json({ ok: true, data: { seoHub: hub, seoPages: pages, commonSeoFaq: commonFaq } });
+  } catch (error) {
+    console.error("[content-db] seo-hub error:", error.message);
+    res.status(500).json({ ok: false, error: "seo_hub_query_failed" });
+  }
+});
+
+app.get("/api/content/seo-page/:slug", async (req, res) => {
+  if (!contentDb) return res.status(503).json({ ok: false, error: "content_db_disabled" });
+  try {
+    const { slug } = req.params;
+    const pageRes = await contentDb.query(
+      `select slug, path, nav_label, title, meta_title, meta_description, added_at, lead,
+              sections, low_frequency_queries, faq, scientific_links
+       from pc_seo_pages
+       where slug = $1
+       limit 1`,
+      [slug]
+    );
+    if (!pageRes.rows[0]) return res.status(404).json({ ok: false, error: "seo_page_not_found" });
+
+    const faqRes = await contentDb.query(
+      "select question, answer from pc_seo_common_faq order by sort_order asc, id asc"
+    );
+    const row = pageRes.rows[0];
+    const page = {
+      slug: row.slug,
+      path: row.path,
+      navLabel: row.nav_label,
+      title: row.title,
+      metaTitle: row.meta_title,
+      metaDescription: row.meta_description,
+      addedAt: row.added_at,
+      lead: row.lead,
+      sections: row.sections || [],
+      lowFrequencyQueries: row.low_frequency_queries || [],
+      faq: row.faq || [],
+      scientificLinks: row.scientific_links || []
+    };
+
+    const commonFaq = faqRes.rows.map((item) => ({ question: item.question, answer: item.answer }));
+    res.json({ ok: true, data: { page, commonSeoFaq: commonFaq } });
+  } catch (error) {
+    console.error("[content-db] seo-page error:", error.message);
+    res.status(500).json({ ok: false, error: "seo_page_query_failed" });
+  }
 });
 
 app.post("/api/feedback", (req, res) => {

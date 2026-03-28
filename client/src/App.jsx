@@ -1,5 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, Route, Routes, useLocation, useParams } from "react-router-dom";
+import {
+  commonCoreServiceFaq,
+  coreServicePages,
+  coreServicesHubContent,
+  findCoreServicePage
+} from "./p1PagesContent";
 
 const SITE_URL = "https://pulscare.ru";
 const MAX_WIDGET_URL =
@@ -707,6 +713,185 @@ function SeoFaq({ items, title = "Частые вопросы" }) {
   );
 }
 
+function CoreServicesHubPage({ onOpenFeedback }) {
+  usePageMeta({
+    title: coreServicesHubContent.metaTitle,
+    description: coreServicesHubContent.metaDescription,
+    path: coreServicesHubContent.path
+  });
+
+  return (
+    <main className="seo-main">
+      <section className="container seo-hero">
+        <p className="legal-kicker">Ключевые услуги</p>
+        <h1>{coreServicesHubContent.title}</h1>
+        <p className="seo-lead">{coreServicesHubContent.lead}</p>
+      </section>
+
+      <section className="container seo-content">
+        <article className="seo-section-card">
+          <h2>Как устроен раздел услуг</h2>
+          <p>{coreServicesHubContent.intro}</p>
+        </article>
+
+        <section className="seo-grid" aria-label="Ключевые услуги Пульс Заботы">
+          {coreServicePages.map((page) => (
+            <article key={page.slug} className="seo-tile">
+              <h3>{page.navLabel}</h3>
+              <p>{page.lead}</p>
+              <Link className="story-link" to={page.path}>
+                Перейти к услуге
+              </Link>
+            </article>
+          ))}
+        </section>
+
+        <article className="seo-section-card seo-cta-box">
+          <h2>Нужна помощь в выборе формата?</h2>
+          <p>{coreServicesHubContent.ctaText}</p>
+          <button className="btn btn-primary" type="button" onClick={() => onOpenFeedback("services-hub")}>
+            Подобрать формат ухода
+          </button>
+        </article>
+
+        <SeoFaq items={coreServicesHubContent.faq} title="FAQ по услугам Пульс Заботы" />
+      </section>
+    </main>
+  );
+}
+
+function CoreServicePage({ page, onOpenFeedback }) {
+  usePageMeta({
+    title: page.metaTitle,
+    description: page.metaDescription,
+    path: page.path
+  });
+
+  const faqItems = useMemo(() => [...page.faq, ...commonCoreServiceFaq], [page.faq]);
+  const serviceLd = useMemo(
+    () => ({
+      "@context": "https://schema.org",
+      "@type": "Service",
+      name: page.title,
+      description: page.metaDescription,
+      provider: {
+        "@type": "Organization",
+        name: "Пульс Заботы",
+        url: SITE_URL
+      },
+      areaServed: ["Санкт-Петербург", "Москва"],
+      url: `${SITE_URL}${page.path}`
+    }),
+    [page.metaDescription, page.path, page.title]
+  );
+
+  useStructuredData(`core-service-${page.slug}`, serviceLd);
+
+  const quickNav = [
+    { id: "for-whom", label: "Для кого услуга" },
+    { id: "included", label: "Что входит" },
+    { id: "steps", label: "Как проходит запуск" },
+    { id: "pricing", label: "Стоимость и условия" },
+    { id: "results", label: "Результат для семьи" },
+    { id: "faq", label: "FAQ" }
+  ];
+
+  return (
+    <main className="seo-main">
+      <section className="container seo-hero">
+        <p className="legal-kicker">Пульс Заботы</p>
+        <h1>{page.title}</h1>
+        <p className="seo-lead">{page.lead}</p>
+        <button className="btn btn-primary seo-hero-btn" type="button" onClick={() => onOpenFeedback(page.slug)}>
+          {page.ctaPrimary}
+        </button>
+      </section>
+
+      <section className="container seo-content">
+        <div className="seo-layout">
+          <div className="seo-main-col">
+            <article className="seo-section-card" id="for-whom">
+              <h2>Для кого услуга</h2>
+              <ul>
+                {page.forWhom.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </article>
+
+            <article className="seo-section-card" id="included">
+              <h2>Что входит в сопровождение</h2>
+              <ul>
+                {page.included.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </article>
+
+            <article className="seo-section-card" id="steps">
+              <h2>Как проходит запуск</h2>
+              <ul>
+                {page.steps.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </article>
+
+            <article className="seo-section-card" id="pricing">
+              <h2>Стоимость и условия</h2>
+              <ul>
+                {page.pricing.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </article>
+
+            <article className="seo-section-card" id="results">
+              <h2>Что получает семья</h2>
+              <ul>
+                {page.results.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </article>
+
+            <SeoFaq items={faqItems} title="FAQ по услуге" />
+          </div>
+
+          <aside className="seo-side-col" aria-label="Быстрая навигация по услуге">
+            <article className="seo-section-card seo-quick-nav">
+              <h2>Навигация</h2>
+              <ul>
+                {quickNav.map((item) => (
+                  <li key={item.id}>
+                    <a href={`#${item.id}`}>{item.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </article>
+            <article className="seo-section-card seo-mini-cta">
+              <h2>Обсудим вашу ситуацию?</h2>
+              <p>Опишите задачу, и мы предложим понятный формат ухода под состояние подопечного и ресурс семьи.</p>
+              <button className="btn btn-primary" type="button" onClick={() => onOpenFeedback(page.slug)}>
+                {page.ctaSecondary}
+              </button>
+            </article>
+          </aside>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+function CoreServiceRoutePage({ onOpenFeedback }) {
+  const { serviceSlug } = useParams();
+  const page = findCoreServicePage(serviceSlug);
+
+  if (!page) return <NotFoundPage />;
+
+  return <CoreServicePage page={page} onOpenFeedback={onOpenFeedback} />;
+}
+
 function SeoServicePage({ page, onOpenFeedback, commonSeoFaq }) {
   usePageMeta({
     title: page.metaTitle,
@@ -908,10 +1093,23 @@ function SeoHubRoutePage({ onOpenFeedback }) {
 
   useEffect(() => {
     let active = true;
-    import("./seoContent.js").then((module) => {
-      if (!active) return;
-      setPayload({ seoHub: module.seoHub, seoPages: module.seoPages });
-    });
+    fetch("/api/content/seo-hub")
+      .then(async (response) => {
+        if (!response.ok) throw new Error(`seo-hub-http-${response.status}`);
+        const json = await response.json();
+        if (!json?.ok || !json?.data) throw new Error("seo-hub-bad-payload");
+        return json.data;
+      })
+      .then((data) => {
+        if (!active) return;
+        setPayload({ seoHub: data.seoHub, seoPages: data.seoPages });
+      })
+      .catch(() => {
+        import("./seoContent.js").then((module) => {
+          if (!active) return;
+          setPayload({ seoHub: module.seoHub, seoPages: module.seoPages });
+        });
+      });
     return () => {
       active = false;
     };
@@ -936,12 +1134,28 @@ function SeoDynamicRoutePage({ onOpenFeedback }) {
 
   useEffect(() => {
     let active = true;
-    import("./seoContent.js").then((module) => {
-      if (!active) return;
-      const pagePath = `/${seoSlug}`;
-      const page = module.seoPages.find((item) => item.path === pagePath) || null;
-      setPayload({ loading: false, page, commonSeoFaq: module.commonSeoFaq || [] });
-    });
+    fetch(`/api/content/seo-page/${encodeURIComponent(seoSlug)}`)
+      .then(async (response) => {
+        if (!response.ok) {
+          if (response.status === 404) return { page: null, commonSeoFaq: [] };
+          throw new Error(`seo-page-http-${response.status}`);
+        }
+        const json = await response.json();
+        if (!json?.ok || !json?.data) throw new Error("seo-page-bad-payload");
+        return json.data;
+      })
+      .then((data) => {
+        if (!active) return;
+        setPayload({ loading: false, page: data.page, commonSeoFaq: data.commonSeoFaq || [] });
+      })
+      .catch(() => {
+        import("./seoContent.js").then((module) => {
+          if (!active) return;
+          const pagePath = `/${seoSlug}`;
+          const page = module.seoPages.find((item) => item.path === pagePath) || null;
+          setPayload({ loading: false, page, commonSeoFaq: module.commonSeoFaq || [] });
+        });
+      });
     return () => {
       active = false;
     };
@@ -1472,6 +1686,8 @@ export default function App() {
 
       <Routes>
         <Route path="/" element={<HomePage onOpenFeedback={setFeedbackMode} />} />
+        <Route path="/services" element={<CoreServicesHubPage onOpenFeedback={setFeedbackMode} />} />
+        <Route path="/services/:serviceSlug" element={<CoreServiceRoutePage onOpenFeedback={setFeedbackMode} />} />
         <Route path="/expert-care" element={<SeoHubRoutePage onOpenFeedback={setFeedbackMode} />} />
         <Route path={SEO_HUB_PATH} element={<SeoHubRoutePage onOpenFeedback={setFeedbackMode} />} />
         <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
