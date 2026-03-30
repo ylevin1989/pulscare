@@ -78,7 +78,7 @@ async function run() {
       [
         "Пульс Заботы",
         "https://pulscare.ru",
-        "+78005553535",
+        "+79119104012",
         "Линия заботы",
         "https://max.ru/u/f9LHodD0cOK9bS67jG-4VDuTSVNFBV-fV0bniFl5mVY8LWf-hhPpnmp4kV4",
         "Высший стандарт патронажной помощи. Создаём пространство заботы и уважения с 2022 года.",

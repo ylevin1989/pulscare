@@ -62,7 +62,7 @@ lines.push("BEGIN;");
 
 lines.push(`
 INSERT INTO pc_site_profile (id, site_name, site_url, support_phone, support_label, max_widget_url, footer_blurb, home_content, legal_content, updated_at)
-VALUES (1, ${q("Пульс Заботы")}, ${q("https://pulscare.ru")}, ${q("+78005553535")}, ${q("Линия заботы")}, ${q("https://max.ru/u/f9LHodD0cOK9bS67jG-4VDuTSVNFBV-fV0bniFl5mVY8LWf-hhPpnmp4kV4")}, ${q("Высший стандарт патронажной помощи. Создаём пространство заботы и уважения с 2022 года.")}, ${qj(homeContent)}, ${qj(legalContent)}, now())
+VALUES (1, ${q("Пульс Заботы")}, ${q("https://pulscare.ru")}, ${q("+79119104012")}, ${q("Линия заботы")}, ${q("https://max.ru/u/f9LHodD0cOK9bS67jG-4VDuTSVNFBV-fV0bniFl5mVY8LWf-hhPpnmp4kV4")}, ${q("Высший стандарт патронажной помощи. Создаём пространство заботы и уважения с 2022 года.")}, ${qj(homeContent)}, ${qj(legalContent)}, now())
 ON CONFLICT (id) DO UPDATE SET
   site_name = EXCLUDED.site_name,
   site_url = EXCLUDED.site_url,

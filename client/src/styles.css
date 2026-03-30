@@ -1209,24 +1209,59 @@ a {
   }
 
   .site-header {
-    grid-template-columns: 1fr;
-    justify-items: start;
-    gap: 18px;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand img {
+    width: 172px;
   }
 
   .nav {
-    flex-wrap: wrap;
-    gap: 14px 20px;
-    font-size: 11px;
+    grid-column: 1 / -1;
+    width: 100%;
+    flex-wrap: nowrap;
     justify-content: flex-start;
+    gap: 14px;
+    font-size: 11px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
   }
 
-  .btn {
-    width: 100%;
+  .nav a {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .site-header .btn {
+    width: auto;
+    min-height: 44px;
+    padding: 10px 14px;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+  }
+
+  .hero {
+    gap: 18px;
+    padding-top: 8px;
+  }
+
+  .hero-copy h1 {
+    max-width: none;
+    font-size: clamp(38px, 11vw, 56px);
+    line-height: 0.95;
   }
 
   .hero-copy p {
-    font-size: 18px;
+    font-size: 16px;
+    line-height: 1.32;
+    margin-bottom: 16px;
+  }
+
+  .hero-copy .btn {
+    width: 100%;
   }
 
   .hero-image {
@@ -1242,31 +1277,58 @@ a {
   }
 
   .services {
-    margin-top: 82px;
+    margin-top: 62px;
   }
 
   .about-section h2 {
-    font-size: 44px;
+    font-size: clamp(34px, 8.5vw, 44px);
+  }
+
+  .services h2 {
+    font-size: clamp(34px, 8.5vw, 44px);
+  }
+
+  .stats {
+    margin-top: 26px;
+    gap: 16px;
+  }
+
+  .pill-title {
+    height: auto;
+    min-height: 86px;
+    padding: 12px 16px;
+  }
+
+  .pill-line {
+    white-space: normal;
   }
 
   .cards-grid {
     grid-template-columns: 1fr;
+    margin-top: 36px;
   }
 
   .service-decor {
     display: none;
   }
 
+  .service-card {
+    min-height: auto;
+  }
+
   .service-card h3 {
     font-size: 36px;
+    min-height: auto;
   }
 
   .price-btn {
-    font-size: 30px;
+    font-size: 24px;
+    min-height: 48px;
   }
 
   .story-card {
     padding: 34px 24px 110px;
+    min-height: auto;
   }
 
   .story-logo {
@@ -1300,12 +1362,17 @@ a {
     gap: 26px;
   }
 
+  .footer-grid li {
+    line-height: 1.2;
+  }
+
   .footer-brand p {
-    font-size: 23px;
+    font-size: 20px;
+    line-height: 1.1;
   }
 
   .phone {
-    font-size: 44px;
+    font-size: clamp(30px, 9.3vw, 42px);
   }
 
   .legal-main {
@@ -1326,6 +1393,7 @@ a {
 
   .legal-content {
     padding: 22px;
+    overflow-wrap: anywhere;
   }
 
   .legal-content h2 {
@@ -1335,6 +1403,7 @@ a {
   .legal-content p,
   .legal-content li {
     font-size: 16px;
+    overflow-wrap: anywhere;
   }
 
   .seo-main {
@@ -1371,6 +1440,7 @@ a {
 
   .seo-section-card {
     padding: 20px;
+    overflow-wrap: anywhere;
   }
 
   .seo-section-card h2,
@@ -1384,6 +1454,56 @@ a {
   .seo-faq-item p,
   .seo-quick-nav a {
     font-size: 16px;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 560px) {
+  .container {
+    width: calc(100% - 20px);
+  }
+
+  .site-header {
+    gap: 10px;
+    padding-top: 12px;
+  }
+
+  .brand img {
+    width: 156px;
+  }
+
+  .site-header .btn {
+    min-height: 40px;
+    padding: 8px 12px;
+    font-size: 10px;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(34px, 10.5vw, 42px);
+  }
+
+  .hero-copy p {
+    font-size: 15px;
+  }
+
+  .about-card h3,
+  .service-card h3 {
+    font-size: 30px;
+  }
+
+  .legal-hero h1,
+  .seo-hero h1 {
+    font-size: 34px;
+  }
+
+  .legal-content h2,
+  .seo-section-card h2,
+  .seo-faq h2 {
+    font-size: 24px;
+  }
+
+  .story-link {
+    font-size: 18px;
   }
 }
 
